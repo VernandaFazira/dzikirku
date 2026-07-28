@@ -711,22 +711,17 @@
 
                 // 3. Service Worker Setup via Blob
                 if ('serviceWorker' in navigator) {
-                    const swCode = `
-                        const CACHE_NAME = 'dzikirku-v1';
-                        // Hanya cache root / karena data dinamis di single file
-                        const urlsToCache = ['.'];
-
-                        self.addEventListener('install', event => {
-                            event.waitUntil(
-                                caches.open(CACHE_NAME).then(cache => cache.addAll(urlsToCache))
-                            );
-                        });
-
-                        self.addEventListener('fetch', event => {
-                            event.respondWith(
-                                caches.match(event.request).then(response => {
-                                    return response || fetch(event.request);
-                                }).catch(() => caches.match('.')) // Offline fallback to root
+                   if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("./sw.js")
+        .then(() => {
+            console.log("Service Worker berhasil didaftarkan");
+            pwaStatus.innerText = "PWA aktif.";
+        })
+        .catch(err => {
+            console.error(err);
+            pwaStatus.innerText = "Service Worker gagal.";
+        });
+}
                             );
                         });
                     `;
