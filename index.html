@@ -3,12 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>DzikirKu - Jalur Langit</title>
-   <link rel="manifest" href="./manifest.json">
-
-<meta name="theme-color" content="#166534">
-
-<link rel="apple-touch-icon" href="./icon-192.png">
+    <title>DzikirKu - Teman Ibadah Harian</title>
     
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
@@ -679,84 +674,88 @@
              * STREAMING_CHUNK:JavaScript - PWA, Service Worker & Manifest Injection
              * Note: Injecting via Blobs to adhere to strict Single-File rule!
              */
-           initPWA: () => {
+            initPWA: () => {
+                // 1. Inject Manifest Dynamically
+                const manifestContent = {
+                    name: "DzikirKu",
+                    short_name: "DzikirKu",
+                    description: "Aplikasi bacaan dzikir dan doa harian",
+                    start_url: "./",
+                    display: "standalone",
+                    background_color: "#166534",
+                    theme_color: "#166534",
+                    icons: [
+                        {
+                            src: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' fill='%23166534' rx='100'/%3E%3Cpath fill='%23fff' d='M256 96c-88.3 0-160 71.7-160 160s71.7 160 160 160 160-71.7 160-160S344.3 96 256 96zm0 288c-70.6 0-128-57.4-128-128S185.4 128 256 128s128 57.4 128 128-57.4 128-128 128z'/%3E%3C/svg%3E",
+                            sizes: "512x512",
+                            type: "image/svg+xml",
+                            purpose: "any maskable"
+                        }
+                    ]
+                };
+                const manifestBlob = new Blob([JSON.stringify(manifestContent)], { type: 'application/json' });
+                const manifestUrl = URL.createObjectURL(manifestBlob);
+                const link = document.createElement('link');
+                link.rel = 'manifest';
+                link.href = manifestUrl;
+                document.head.appendChild(link);
 
-    let deferredPrompt;
-
-    const installBtn = document.getElementById("btn-install");
-    const pwaStatus = document.getElementById("pwa-status");
-
-    window.addEventListener("beforeinstallprompt", (e) => {
-
-        e.preventDefault();
-
-        deferredPrompt = e;
-
-        installBtn.classList.remove("hidden");
-
-        pwaStatus.innerText = "Aplikasi siap di-install.";
-
-    });
-
-    installBtn.addEventListener("click", async () => {
-
-        if (!deferredPrompt) return;
-
-        deferredPrompt.prompt();
-
-        const { outcome } = await deferredPrompt.userChoice;
-
-        if (outcome === "accepted") {
-
-            utils.showToast("Terima kasih sudah menginstall DzikirKu");
-
-        }
-
-        deferredPrompt = null;
-
-        installBtn.classList.add("hidden");
-
-    });
-
-    window.addEventListener("appinstalled", () => {
-
-        installBtn.classList.add("hidden");
-
-        pwaStatus.innerText = "DzikirKu sudah terinstall.";
-
-    });
-
-    if ("serviceWorker" in navigator) {
-
-        navigator.serviceWorker.register("./sw.js")
-
-        .then(() => {
-
-            console.log("Service Worker Registered");
-
-            pwaStatus.innerText = "PWA Aktif";
-
-        })
-
-        .catch(err => {
-
-            console.error(err);
-
-            pwaStatus.innerText = "Service Worker gagal";
-
-        });
-
-    } else {
-
-        pwaStatus.innerText = "Browser tidak mendukung Service Worker.";
-
-    }
-
+                // 2. Install Prompt Logic
+                let deferredPrompt;
+                const installBtn = document.getElementById('btn-install');
+                const pwaStatus = document.getElementById('pwa-status');
+                
+                window.addEventListener('beforeinstallprompt', (e) => {
+                    e.preventDefault();
+                    deferredPrompt = e;
+                    installBtn.classList.remove('hidden');
+                    pwaStatus.innerText = "Aplikasi siap di-install (PWA).";
                 });
 
-               
+                installBtn.addEventListener('click', async () => {
+                    if (deferredPrompt) {
+                        deferredPrompt.prompt();
+                        const { outcome } = await deferredPrompt.userChoice;
+                        if (outcome === 'accepted') {
+                            installBtn.classList.add('hidden');
+                            pwaStatus.innerText = "Terima kasih telah menginstall DzikirKu!";
+                        }
+                        deferredPrompt = null;
+                    }
+                });
+
+                window.addEventListener('appinstalled', () => {
+                    installBtn.classList.add('hidden');
+                    pwaStatus.innerText = "Aplikasi sudah terinstall.";
+                    utils.showToast('DzikirKu berhasil di-install!');
+                });
+
+                // 3. Service Worker Setup via Blob
+                if ('serviceWorker' in navigator) {
+                    const swCode = `
+                        const CACHE_NAME = 'dzikirku-v1';
+                        // Hanya cache root / karena data dinamis di single file
+                        const urlsToCache = ['.'];
+
+                        self.addEventListener('install', event => {
+                            event.waitUntil(
+                                caches.open(CACHE_NAME).then(cache => cache.addAll(urlsToCache))
+                            );
+                        });
+
+                        self.addEventListener('fetch', event => {
+                            event.respondWith(
+                                caches.match(event.request).then(response => {
+                                    return response || fetch(event.request);
+                                }).catch(() => caches.match('.')) // Offline fallback to root
+                            );
+                        });
+                    `;
                     
-                
+                    const swBlob = new Blob([swCode], { type: 'text/javascript' });
+                    const swUrl = URL.createObjectURL(swBlob);
+                    
+                    navigator.serviceWorker.register(swUrl)
                         .then(reg => console.log('Service Worker registered via Blob', reg))
                         .catch(err => {
                             console.log('SW Registration failed (Expected in some Iframe environments):', err);
