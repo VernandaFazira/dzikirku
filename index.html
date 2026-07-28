@@ -679,68 +679,84 @@
              * STREAMING_CHUNK:JavaScript - PWA, Service Worker & Manifest Injection
              * Note: Injecting via Blobs to adhere to strict Single-File rule!
              */
-            initPWA: () => {
-                // 1. Inject Manifest Dynamically
+           initPWA: () => {
 
-                // 2. Install Prompt Logic
-                let deferredPrompt;
-                const installBtn = document.getElementById('btn-install');
-                const pwaStatus = document.getElementById('pwa-status');
-                
-                window.addEventListener('beforeinstallprompt', (e) => {
-                    e.preventDefault();
-                    deferredPrompt = e;
-                    installBtn.classList.remove('hidden');
-                    pwaStatus.innerText = "Aplikasi siap di-install (PWA).";
-                });
+    let deferredPrompt;
 
-                installBtn.addEventListener('click', async () => {
-                    if (deferredPrompt) {
-                        deferredPrompt.prompt();
-                        const { outcome } = await deferredPrompt.userChoice;
-                        if (outcome === 'accepted') {
-                            installBtn.classList.add('hidden');
-                            pwaStatus.innerText = "Terima kasih telah menginstall DzikirKu!";
-                        }
-                        deferredPrompt = null;
-                    }
-                });
+    const installBtn = document.getElementById("btn-install");
+    const pwaStatus = document.getElementById("pwa-status");
 
-                window.addEventListener('appinstalled', () => {
-                    installBtn.classList.add('hidden');
-                    pwaStatus.innerText = "Aplikasi sudah terinstall.";
-                    utils.showToast('DzikirKu berhasil di-install!');
-                });
+    window.addEventListener("beforeinstallprompt", (e) => {
 
-                // 3. Service Worker Setup via Blob
-                if ('serviceWorker' in navigator) {
-                   if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("./sw.js")
-        .then(() => {
-            console.log("Service Worker berhasil didaftarkan");
-            pwaStatus.innerText = "PWA aktif.";
-        })
-        .catch(err => {
-            console.error(err);
-            pwaStatus.innerText = "Service Worker gagal.";
-        });
-}
-                            );
-                        });
-                    `;
-                    
-                  if ("serviceWorker" in navigator) {
+        e.preventDefault();
 
-    navigator.serviceWorker.register("sw.js")
-    .then(()=>{
+        deferredPrompt = e;
 
-        console.log("SW Registered");
+        installBtn.classList.remove("hidden");
+
+        pwaStatus.innerText = "Aplikasi siap di-install.";
 
     });
 
-}
+    installBtn.addEventListener("click", async () => {
+
+        if (!deferredPrompt) return;
+
+        deferredPrompt.prompt();
+
+        const { outcome } = await deferredPrompt.userChoice;
+
+        if (outcome === "accepted") {
+
+            utils.showToast("Terima kasih sudah menginstall DzikirKu");
+
+        }
+
+        deferredPrompt = null;
+
+        installBtn.classList.add("hidden");
+
+    });
+
+    window.addEventListener("appinstalled", () => {
+
+        installBtn.classList.add("hidden");
+
+        pwaStatus.innerText = "DzikirKu sudah terinstall.";
+
+    });
+
+    if ("serviceWorker" in navigator) {
+
+        navigator.serviceWorker.register("./sw.js")
+
+        .then(() => {
+
+            console.log("Service Worker Registered");
+
+            pwaStatus.innerText = "PWA Aktif";
+
+        })
+
+        .catch(err => {
+
+            console.error(err);
+
+            pwaStatus.innerText = "Service Worker gagal";
+
+        });
+
+    } else {
+
+        pwaStatus.innerText = "Browser tidak mendukung Service Worker.";
+
+    }
+
+                });
+
+               
                     
-                    navigator.serviceWorker.register(swUrl)
+                
                         .then(reg => console.log('Service Worker registered via Blob', reg))
                         .catch(err => {
                             console.log('SW Registration failed (Expected in some Iframe environments):', err);
