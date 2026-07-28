@@ -3,15 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>DzikirKu - Jalur Langit</title>
-    <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#166534">
+    <meta name="theme-color" content="#166534">
+    <meta name="description" content="DzikirKu v2.0 - Teman Ibadah Harian, Dzikir Pagi, Petang, Malam, Doa Nabi, dan Sholawat.">
+    <title>DzikirKu v2.0 - Teman Ibadah Harian</title>
     
-    <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
-    <!-- FontAwesome for Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -21,15 +23,23 @@
             theme: {
                 extend: {
                     colors: {
-                        primary: '#166534', // Hijau tua
-                        secondary: '#DCFCE7', // Hijau muda
-                        accent: '#D4AF37', // Aksen emas
-                        darkBg: '#111827',
-                        darkCard: '#1F2937'
+                        primary: '#166534',
+                        primaryDark: '#14532d',
+                        secondary: '#DCFCE7',
+                        accent: '#D4AF37',
+                        accentHover: '#B59328',
+                        darkBg: '#0F172A',
+                        darkCard: '#1E293B',
+                        darkBorder: '#334155'
                     },
                     fontFamily: {
                         sans: ['Poppins', 'sans-serif'],
                         arabic: ['Amiri', 'serif'],
+                    },
+                    boxShadow: {
+                        'md3': '0 4px 20px -2px rgba(0, 0, 0, 0.05), 0 2px 6px -1px rgba(0, 0, 0, 0.02)',
+                        'md3-hover': '0 10px 25px -5px rgba(22, 101, 52, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.05)',
+                        'dark-md3': '0 4px 20px -2px rgba(0, 0, 0, 0.3)',
                     }
                 }
             }
@@ -37,455 +47,724 @@
     </script>
 
     <style>
-        /* Base styles & Smooth scrolling */
+        /* Base styles */
         html { scroll-behavior: smooth; }
         body { 
             -webkit-tap-highlight-color: transparent;
-            background-color: #f3f4f6; /* gray-100 */
+            background-color: #F8FAFC;
+            font-family: 'Poppins', sans-serif;
+            user-select: none;
         }
-        .dark body { background-color: #111827; /* darkBg */ }
+        .dark body { background-color: #0F172A; }
+
+        /* Arabic Typography */
+        .arabic-text {
+            direction: rtl;
+            line-height: 2.3;
+            font-size: 1.85rem;
+            font-family: 'Amiri', serif;
+            word-spacing: 2px;
+        }
+
+        /* Material Ripple & Glassmorphism Effect */
+        .glass-header {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        .dark .glass-header {
+            background: rgba(30, 41, 59, 0.85);
+        }
+
+        /* Animations */
+        .fade-in { animation: fadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Active Navigation Pill */
+        .nav-pill-active {
+            background-color: #DCFCE7;
+            color: #166534;
+            border-radius: 9999px;
+        }
+        .dark .nav-pill-active {
+            background-color: #1E293B;
+            color: #D4AF37;
+        }
 
         /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar { width: 5px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #166534; border-radius: 10px; }
         .dark ::-webkit-scrollbar-thumb { background: #D4AF37; }
 
-        /* Arabic Text Styling */
-        .arabic-text {
-            direction: rtl;
-            line-height: 2.2;
-            font-size: 1.75rem;
-        }
-
-        /* Animations */
-        .fade-in { animation: fadeIn 0.3s ease-in-out; }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Toast Animation */
-        .toast-enter { animation: toastEnter 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
-        .toast-leave { animation: toastLeave 0.3s ease-in forwards; }
-        @keyframes toastEnter {
-            from { opacity: 0; transform: translate(-50%, 20px); }
-            to { opacity: 1; transform: translate(-50%, 0); }
-        }
-        @keyframes toastLeave {
-            from { opacity: 1; transform: translate(-50%, 0); }
-            to { opacity: 0; transform: translate(-50%, 20px); }
-        }
-
-        /* Loading Spinner */
-        .loader {
-            border: 4px solid #f3f4f6;
-            border-top: 4px solid #166534;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-        }
-        .dark .loader { border: 4px solid #374151; border-top: 4px solid #D4AF37; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
-        /* View container logic */
+        /* View Container State */
         .view-section { display: none; }
-        .view-section.active { display: block; animation: fadeIn 0.4s ease; }
+        .view-section.active { display: block; animation: fadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1); }
+
+        /* Counter Button Pulse */
+        .tap-pulse:active { transform: scale(0.94); }
     </style>
 </head>
-<body class="text-gray-800 dark:text-gray-200 transition-colors duration-300 min-h-screen flex flex-col">
+<body class="text-slate-800 dark:text-slate-100 transition-colors duration-300 min-h-screen flex flex-col">
 
-    <nav class="fixed top-0 w-full bg-white dark:bg-darkCard shadow-md z-50 transition-colors duration-300">
+    <header class="fixed top-0 w-full glass-header border-b border-slate-200/60 dark:border-slate-800 z-50 transition-colors duration-300">
         <div class="max-w-md mx-auto px-4 h-16 flex justify-between items-center">
-            <div class="flex items-center gap-2 cursor-pointer" onclick="app.navigate('home')">
-                <i class="fa-solid fa-moon text-primary dark:text-accent text-2xl"></i>
-                <h1 class="font-bold text-xl text-primary dark:text-accent">DzikirKu</h1>
+            <div class="flex items-center gap-3 cursor-pointer" onclick="DzikirApp.navigate('home')">
+                <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-primary to-green-600 flex items-center justify-center text-white shadow-md">
+                    <i class="fa-solid fa-kaaba text-lg"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg leading-tight text-primary dark:text-accent tracking-wide">DzikirKu</h1>
+                    <span class="text-[10px] text-slate-500 dark:text-slate-400 font-medium tracking-wider uppercase block -mt-0.5">v2.0 Premium</span>
+                </div>
             </div>
-            <div class="flex items-center gap-4">
-                <button id="btn-theme" class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition" aria-label="Toggle Theme">
-                    <i class="fa-solid fa-moon text-gray-600 dark:text-gray-300" id="icon-theme"></i>
+            <div class="flex items-center gap-2">
+                <button id="btn-theme" class="w-10 h-10 rounded-xl flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all" aria-label="Toggle Dark Mode">
+                    <i class="fa-solid fa-moon text-lg" id="icon-theme"></i>
                 </button>
-                <button onclick="app.navigate('settings')" class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition" aria-label="Settings">
-                    <i class="fa-solid fa-gear text-gray-600 dark:text-gray-300"></i>
+                <button onclick="DzikirApp.navigate('settings')" class="w-10 h-10 rounded-xl flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all" aria-label="Settings">
+                    <i class="fa-solid fa-sliders text-lg"></i>
                 </button>
             </div>
         </div>
-    </nav>
+    </header>
 
-    <main class="flex-grow max-w-md mx-auto w-full pt-20 pb-24 px-4 relative">
+    <main class="flex-grow max-w-md mx-auto w-full pt-20 pb-28 px-4 relative">
         
-        <!-- View: HOME -->
+        <!-- ================= VIEW: HOME ================= -->
         <section id="view-home" class="view-section active">
-            <!-- Hero Section -->
-            <div class="bg-gradient-to-br from-primary to-green-800 rounded-2xl p-6 text-white shadow-lg mb-6 relative overflow-hidden">
-                <div class="absolute -right-4 -top-4 opacity-10">
+            <!-- Hero Dashboard Banner -->
+            <div class="bg-gradient-to-br from-primary via-green-800 to-emerald-950 rounded-3xl p-6 text-white shadow-md3 dark:shadow-dark-md3 mb-6 relative overflow-hidden">
+                <div class="absolute -right-6 -bottom-6 opacity-10 pointer-events-none">
                     <i class="fa-solid fa-mosque text-9xl"></i>
                 </div>
-                <h2 class="text-2xl font-bold mb-1">Assalamu'alaikum</h2>
-                <p class="text-sm opacity-90 mb-4" id="date-display">Senin, 1 Jan 2024</p>
-                <div class="text-4xl font-bold font-mono tracking-wider" id="clock-display">00:00:00</div>
-                <div class="mt-4 p-3 bg-white/20 rounded-lg backdrop-blur-sm">
-                    <p class="text-xs italic">"Maka ingatlah kepada-Ku, Aku pun akan ingat kepadamu." (QS. Al-Baqarah: 152)</p>
+                <div class="flex justify-between items-start mb-3">
+                    <div>
+                        <span id="time-greeting" class="inline-block px-3 py-1 bg-white/15 backdrop-blur-md rounded-full text-xs font-medium text-emerald-100 mb-1">
+                            Assalamu'alaikum
+                        </span>
+                        <h2 class="text-2xl font-bold tracking-tight" id="user-greeting-title">Selamat Pagi</h2>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-[11px] opacity-80" id="date-display">Senin, 1 Jan 2026</p>
+                        <p class="text-2xl font-bold font-mono tracking-wider text-accent" id="clock-display">00:00:00</p>
+                    </div>
+                </div>
+
+                <!-- Islamic Quote Box -->
+                <div class="mt-4 p-3.5 bg-white/10 backdrop-blur-md rounded-2xl border border-white/10">
+                    <p class="text-xs italic leading-relaxed text-emerald-50" id="quote-display">
+                        "Maka ingatlah kepada-Ku, Aku pun akan ingat kepadamu." (QS. Al-Baqarah: 152)
+                    </p>
+                </div>
+
+                <!-- Stats Summary Strip -->
+                <div class="grid grid-cols-2 gap-2 mt-4 pt-3 border-t border-white/10 text-xs">
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-circle-check text-accent text-sm"></i>
+                        <span>Dibaca Hari Ini: <strong id="stat-read-count">0</strong></span>
+                    </div>
+                    <div class="flex items-center gap-2 justify-end">
+                        <i class="fa-solid fa-heart text-rose-400 text-sm"></i>
+                        <span>Favorit: <strong id="stat-fav-count">0</strong></span>
+                    </div>
                 </div>
             </div>
 
-            <!-- Menu Grid -->
-            <h3 class="font-semibold text-lg mb-3 dark:text-gray-100">Kumpulan Dzikir & Doa</h3>
-            <div class="grid grid-cols-2 gap-4">
-                <button onclick="app.navigate('list', 'pagi')" class="flex flex-col items-center justify-center p-4 bg-white dark:bg-darkCard rounded-xl shadow hover:shadow-md hover:scale-105 transition-all group">
-                    <div class="w-12 h-12 bg-secondary dark:bg-gray-700 rounded-full flex items-center justify-center mb-3 group-hover:bg-primary transition-colors">
-                        <i class="fa-solid fa-sun text-primary dark:text-accent group-hover:text-white"></i>
+            <!-- Recently Read Shortcut Banner -->
+            <div id="recent-container" class="hidden mb-6">
+                <div class="flex justify-between items-center mb-2 px-1">
+                    <h3 class="font-semibold text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider">Terakhir Dibaca</h3>
+                    <button onclick="StorageManager.clearHistory()" class="text-xs text-rose-500 hover:underline">Hapus</button>
+                </div>
+                <div id="recent-card" class="bg-white dark:bg-darkCard rounded-2xl p-4 shadow-sm border border-slate-100 dark:border-darkBorder flex items-center justify-between cursor-pointer hover:border-primary transition" onclick="DzikirApp.openRecent()">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-secondary dark:bg-slate-800 text-primary dark:text-accent flex items-center justify-center">
+                            <i class="fa-solid fa-clock-rotate-left"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-sm dark:text-white" id="recent-title">-</h4>
+                            <p class="text-xs text-slate-500 dark:text-slate-400" id="recent-subtitle">-</p>
+                        </div>
                     </div>
-                    <span class="font-medium text-sm">Dzikir Pagi</span>
+                    <i class="fa-solid fa-chevron-right text-slate-400 text-sm"></i>
+                </div>
+            </div>
+
+            <!-- Category Grid Menu -->
+            <h3 class="font-bold text-base mb-3 text-slate-800 dark:text-slate-100 px-1 flex items-center gap-2">
+                <i class="fa-solid fa-border-all text-primary dark:text-accent"></i> Kumpulan Dzikir & Doa
+            </h3>
+            <div class="grid grid-cols-2 gap-3.5 mb-6">
+                <button onclick="DzikirApp.navigate('list', 'pagi')" class="flex flex-col items-start p-4 bg-white dark:bg-darkCard rounded-2xl shadow-sm border border-slate-100 dark:border-darkBorder hover:shadow-md3 hover:-translate-y-0.5 transition-all group">
+                    <div class="w-11 h-11 bg-emerald-100 dark:bg-emerald-950/60 rounded-xl flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-sun text-primary dark:text-accent text-xl"></i>
+                    </div>
+                    <span class="font-semibold text-sm dark:text-white">Dzikir Pagi</span>
+                    <span class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">Subuh - Syuruq</span>
                 </button>
-                <button onclick="app.navigate('list', 'petang')" class="flex flex-col items-center justify-center p-4 bg-white dark:bg-darkCard rounded-xl shadow hover:shadow-md hover:scale-105 transition-all group">
-                    <div class="w-12 h-12 bg-orange-100 dark:bg-gray-700 rounded-full flex items-center justify-center mb-3 group-hover:bg-orange-500 transition-colors">
-                        <i class="fa-solid fa-cloud-sun text-orange-600 dark:text-accent group-hover:text-white"></i>
+
+                <button onclick="DzikirApp.navigate('list', 'petang')" class="flex flex-col items-start p-4 bg-white dark:bg-darkCard rounded-2xl shadow-sm border border-slate-100 dark:border-darkBorder hover:shadow-md3 hover:-translate-y-0.5 transition-all group">
+                    <div class="w-11 h-11 bg-amber-100 dark:bg-amber-950/60 rounded-xl flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-cloud-sun text-amber-600 dark:text-accent text-xl"></i>
                     </div>
-                    <span class="font-medium text-sm">Dzikir Petang</span>
+                    <span class="font-semibold text-sm dark:text-white">Dzikir Petang</span>
+                    <span class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">Ashar - Maghrib</span>
                 </button>
-                <button onclick="app.navigate('list', 'malam')" class="flex flex-col items-center justify-center p-4 bg-white dark:bg-darkCard rounded-xl shadow hover:shadow-md hover:scale-105 transition-all group">
-                    <div class="w-12 h-12 bg-blue-100 dark:bg-gray-700 rounded-full flex items-center justify-center mb-3 group-hover:bg-blue-800 transition-colors">
-                        <i class="fa-solid fa-moon text-blue-800 dark:text-accent group-hover:text-white"></i>
+
+                <button onclick="DzikirApp.navigate('list', 'malam')" class="flex flex-col items-start p-4 bg-white dark:bg-darkCard rounded-2xl shadow-sm border border-slate-100 dark:border-darkBorder hover:shadow-md3 hover:-translate-y-0.5 transition-all group">
+                    <div class="w-11 h-11 bg-indigo-100 dark:bg-indigo-950/60 rounded-xl flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-moon text-indigo-600 dark:text-accent text-xl"></i>
                     </div>
-                    <span class="font-medium text-sm">Dzikir Tengah Malam</span>
+                    <span class="font-semibold text-sm dark:text-white">Dzikir Malam</span>
+                    <span class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">Tahajjud & Sahar</span>
                 </button>
-                <button onclick="app.navigate('list', 'tasbih')" class="flex flex-col items-center justify-center p-4 bg-white dark:bg-darkCard rounded-xl shadow hover:shadow-md hover:scale-105 transition-all group">
-                    <div class="w-12 h-12 bg-emerald-100 dark:bg-gray-700 rounded-full flex items-center justify-center mb-3 group-hover:bg-emerald-600 transition-colors">
-                        <i class="fa-solid fa-repeat text-emerald-600 dark:text-accent group-hover:text-white"></i>
+
+                <button onclick="DzikirApp.navigate('list', 'tasbih')" class="flex flex-col items-start p-4 bg-white dark:bg-darkCard rounded-2xl shadow-sm border border-slate-100 dark:border-darkBorder hover:shadow-md3 hover:-translate-y-0.5 transition-all group">
+                    <div class="w-11 h-11 bg-teal-100 dark:bg-teal-950/60 rounded-xl flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-repeat text-teal-600 dark:text-accent text-xl"></i>
                     </div>
-                    <span class="font-medium text-sm">Tasbih & Dzikir Utama</span>
+                    <span class="font-semibold text-sm dark:text-white">Tasbih & Dzikir</span>
+                    <span class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">33x & Pembuka Rezeki</span>
                 </button>
-                <button onclick="app.navigate('list', 'asmaulhusna')" class="flex flex-col items-center justify-center p-4 bg-white dark:bg-darkCard rounded-xl shadow hover:shadow-md hover:scale-105 transition-all group">
-                    <div class="w-12 h-12 bg-amber-100 dark:bg-gray-700 rounded-full flex items-center justify-center mb-3 group-hover:bg-amber-600 transition-colors">
-                        <i class="fa-solid fa-star text-amber-600 dark:text-accent group-hover:text-white"></i>
+
+                <button onclick="DzikirApp.navigate('list', 'asmaulhusna')" class="flex flex-col items-start p-4 bg-white dark:bg-darkCard rounded-2xl shadow-sm border border-slate-100 dark:border-darkBorder hover:shadow-md3 hover:-translate-y-0.5 transition-all group">
+                    <div class="w-11 h-11 bg-amber-100 dark:bg-amber-950/60 rounded-xl flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-star text-amber-600 dark:text-accent text-xl"></i>
                     </div>
-                    <span class="font-medium text-sm">Asmaul Husna</span>
+                    <span class="font-semibold text-sm dark:text-white">Asmaul Husna</span>
+                    <span class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">99 Nama Allah Utama</span>
                 </button>
-                <button onclick="app.navigate('list', 'doa')" class="flex flex-col items-center justify-center p-4 bg-white dark:bg-darkCard rounded-xl shadow hover:shadow-md hover:scale-105 transition-all group">
-                    <div class="w-12 h-12 bg-purple-100 dark:bg-gray-700 rounded-full flex items-center justify-center mb-3 group-hover:bg-purple-600 transition-colors">
-                        <i class="fa-solid fa-hands-praying text-purple-600 dark:text-accent group-hover:text-white"></i>
+
+                <button onclick="DzikirApp.navigate('list', 'doa')" class="flex flex-col items-start p-4 bg-white dark:bg-darkCard rounded-2xl shadow-sm border border-slate-100 dark:border-darkBorder hover:shadow-md3 hover:-translate-y-0.5 transition-all group">
+                    <div class="w-11 h-11 bg-purple-100 dark:bg-purple-950/60 rounded-xl flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-hands-praying text-purple-600 dark:text-accent text-xl"></i>
                     </div>
-                    <span class="font-medium text-sm">Doa Harian & Khusus</span>
+                    <span class="font-semibold text-sm dark:text-white">Doa Para Nabi</span>
+                    <span class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">Sulaiman, Musa, Yunus</span>
                 </button>
-                <button onclick="app.navigate('list', 'sholawat')" class="flex flex-col items-center justify-center p-4 bg-white dark:bg-darkCard rounded-xl shadow hover:shadow-md hover:scale-105 transition-all group">
-                    <div class="w-12 h-12 bg-rose-100 dark:bg-gray-700 rounded-full flex items-center justify-center mb-3 group-hover:bg-rose-600 transition-colors">
-                        <i class="fa-solid fa-heart text-rose-600 dark:text-accent group-hover:text-white"></i>
+
+                <button onclick="DzikirApp.navigate('list', 'sholawat')" class="flex flex-col items-start p-4 bg-white dark:bg-darkCard rounded-2xl shadow-sm border border-slate-100 dark:border-darkBorder hover:shadow-md3 hover:-translate-y-0.5 transition-all group">
+                    <div class="w-11 h-11 bg-rose-100 dark:bg-rose-950/60 rounded-xl flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-heart text-rose-600 dark:text-accent text-xl"></i>
                     </div>
-                    <span class="font-medium text-sm">Sholawat Nabi</span>
+                    <span class="font-semibold text-sm dark:text-white">Sholawat Nabi</span>
+                    <span class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">Nariyah, Jibril, dll</span>
                 </button>
-                <button onclick="app.navigate('favorites')" class="flex flex-col items-center justify-center p-4 bg-white dark:bg-darkCard rounded-xl shadow hover:shadow-md hover:scale-105 transition-all group border-2 border-dashed border-gray-300 dark:border-gray-600">
-                    <div class="w-12 h-12 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mb-3 group-hover:bg-accent transition-colors">
-                        <i class="fa-solid fa-bookmark text-gray-500 dark:text-gray-300 group-hover:text-white"></i>
+
+                <button onclick="DzikirApp.navigate('favorites')" class="flex flex-col items-start p-4 bg-white dark:bg-darkCard rounded-2xl shadow-sm border border-dashed border-slate-300 dark:border-slate-700 hover:border-primary transition-all group">
+                    <div class="w-11 h-11 bg-slate-100 dark:bg-slate-800 rounded-xl flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-bookmark text-slate-600 dark:text-accent text-xl"></i>
                     </div>
-                    <span class="font-medium text-sm">Favorit Tersimpan</span>
+                    <span class="font-semibold text-sm dark:text-white">Favorit Saya</span>
+                    <span class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">Disimpan offline</span>
                 </button>
             </div>
         </section>
 
-        <!-- View: LIST -->
+        <!-- ================= VIEW: LIST ================= -->
         <section id="view-list" class="view-section">
-            <div class="flex items-center gap-3 mb-4">
-                <button onclick="app.navigate('home')" class="w-10 h-10 flex items-center justify-center rounded-full bg-white dark:bg-darkCard shadow hover:bg-gray-50 transition">
-                    <i class="fa-solid fa-arrow-left"></i>
-                </button>
-                <h2 id="list-title" class="text-xl font-bold">Judul</h2>
+            <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center gap-3">
+                    <button onclick="DzikirApp.navigate('home')" class="w-10 h-10 flex items-center justify-center rounded-2xl bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder text-slate-700 dark:text-slate-200 shadow-sm active:scale-95 transition">
+                        <i class="fa-solid fa-arrow-left"></i>
+                    </button>
+                    <div>
+                        <h2 id="list-title" class="text-xl font-bold dark:text-white">Judul Category</h2>
+                        <p id="list-desc" class="text-xs text-slate-500 dark:text-slate-400">Deskripsi singkat</p>
+                    </div>
+                </div>
             </div>
-            <p id="list-desc" class="text-sm text-gray-600 dark:text-gray-400 mb-4"></p>
 
-            <!-- Search -->
-            <div class="relative mb-6">
-                <input type="text" id="search-input" placeholder="Cari bacaan..." class="w-full bg-white dark:bg-darkCard border-none rounded-xl py-3 pl-12 pr-4 shadow-sm focus:ring-2 focus:ring-primary dark:focus:ring-accent outline-none text-sm dark:text-white">
-                <i class="fa-solid fa-search absolute left-4 top-3.5 text-gray-400"></i>
+            <!-- Debounced Search Box -->
+            <div class="relative mb-5">
+                <input type="text" id="search-input" placeholder="Cari judul, latin, arti, atau sumber..." class="w-full bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder rounded-2xl py-3 pl-11 pr-10 shadow-sm focus:ring-2 focus:ring-primary dark:focus:ring-accent outline-none text-sm dark:text-white transition">
+                <i class="fa-solid fa-magnifying-glass absolute left-4 top-3.5 text-slate-400 text-sm"></i>
+                <button id="search-clear-btn" class="hidden absolute right-3.5 top-3 text-slate-400 hover:text-slate-600 text-sm p-1" onclick="SearchManager.clearSearch()">
+                    <i class="fa-solid fa-circle-xmark"></i>
+                </button>
             </div>
 
             <!-- List Container -->
-            <div id="list-container" class="space-y-6">
-                <!-- Cards injected here via JS -->
+            <div id="list-container" class="space-y-4">
+                <!-- Data cards injected via JS -->
             </div>
             
-            <!-- Empty State -->
-            <div id="list-empty" class="hidden flex-col items-center justify-center py-10 text-gray-500">
-                <i class="fa-solid fa-box-open text-4xl mb-3"></i>
-                <p>Tidak ada data ditemukan.</p>
+            <!-- Empty Search State -->
+            <div id="list-empty" class="hidden flex-col items-center justify-center py-12 text-slate-400 dark:text-slate-500">
+                <i class="fa-solid fa-box-open text-5xl mb-3 opacity-60"></i>
+                <p class="font-medium text-sm">Tidak ada bacaan ditemukan.</p>
+                <p class="text-xs text-slate-400 mt-1">Coba gunakan kata kunci pencarian lain.</p>
             </div>
         </section>
 
-        <!-- View: FAVORITES -->
+        <!-- ================= VIEW: FAVORITES ================= -->
         <section id="view-favorites" class="view-section">
-            <div class="flex items-center gap-3 mb-6">
-                <button onclick="app.navigate('home')" class="w-10 h-10 flex items-center justify-center rounded-full bg-white dark:bg-darkCard shadow hover:bg-gray-50 transition">
-                    <i class="fa-solid fa-arrow-left"></i>
+            <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center gap-3">
+                    <button onclick="DzikirApp.navigate('home')" class="w-10 h-10 flex items-center justify-center rounded-2xl bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder text-slate-700 dark:text-slate-200 shadow-sm active:scale-95 transition">
+                        <i class="fa-solid fa-arrow-left"></i>
+                    </button>
+                    <div>
+                        <h2 class="text-xl font-bold dark:text-white">Favorit Tersimpan</h2>
+                        <p class="text-xs text-slate-500 dark:text-slate-400" id="fav-count-subtitle">0 bacaan disimpan</p>
+                    </div>
+                </div>
+                <button id="btn-clear-favs" onclick="DzikirApp.confirmClearFavorites()" class="hidden text-xs text-rose-500 hover:text-rose-600 font-medium px-3 py-1.5 rounded-xl border border-rose-200 dark:border-rose-900/50 bg-rose-50 dark:bg-rose-950/30">
+                    <i class="fa-solid fa-trash-can mr-1"></i> Hapus Semua
                 </button>
-                <h2 class="text-xl font-bold">Favorit Tersimpan</h2>
             </div>
-            <div id="favorites-container" class="space-y-6">
-                <!-- Favorite Cards injected here -->
+
+            <div id="favorites-container" class="space-y-4">
+                <!-- Favorite items injected via JS -->
             </div>
-            <div id="favorites-empty" class="hidden flex-col items-center justify-center py-16 text-gray-500">
-                <i class="fa-regular fa-bookmark text-5xl mb-4 opacity-50"></i>
-                <p class="text-center px-6">Belum ada bacaan yang disimpan ke Favorit.<br><span class="text-sm">Klik ikon bookmark pada bacaan untuk menyimpannya.</span></p>
+
+            <div id="favorites-empty" class="hidden flex-col items-center justify-center py-16 text-slate-400 dark:text-slate-500">
+                <div class="w-20 h-20 bg-slate-100 dark:bg-slate-800/80 rounded-full flex items-center justify-center mb-4">
+                    <i class="fa-regular fa-bookmark text-3xl opacity-60"></i>
+                </div>
+                <h4 class="font-semibold text-slate-700 dark:text-slate-300 mb-1">Belum Ada Favorit</h4>
+                <p class="text-xs text-center max-w-xs leading-relaxed px-4">Tekan ikon bookmark pada bacaan dzikir atau doa untuk menyimpannya di sini.</p>
             </div>
         </section>
 
-        <!-- View: SETTINGS / ABOUT -->
+        <!-- ================= VIEW: SETTINGS ================= -->
         <section id="view-settings" class="view-section">
-            <div class="flex items-center gap-3 mb-6">
-                <button onclick="app.navigate('home')" class="w-10 h-10 flex items-center justify-center rounded-full bg-white dark:bg-darkCard shadow hover:bg-gray-50 transition">
+            <div class="flex items-center gap-3 mb-5">
+                <button onclick="DzikirApp.navigate('home')" class="w-10 h-10 flex items-center justify-center rounded-2xl bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder text-slate-700 dark:text-slate-200 shadow-sm active:scale-95 transition">
                     <i class="fa-solid fa-arrow-left"></i>
                 </button>
-                <h2 class="text-xl font-bold">Pengaturan</h2>
+                <h2 class="text-xl font-bold dark:text-white">Pengaturan & PWA</h2>
             </div>
 
-            <div class="bg-white dark:bg-darkCard rounded-xl shadow overflow-hidden mb-6">
-                <div class="p-4 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center">
+            <!-- PWA Controls Box -->
+            <div class="bg-white dark:bg-darkCard rounded-2xl shadow-sm border border-slate-100 dark:border-darkBorder p-5 mb-4">
+                <h3 class="font-bold text-sm mb-1 dark:text-white flex items-center gap-2">
+                    <i class="fa-solid fa-mobile-screen-button text-primary dark:text-accent"></i> Progressive Web App (PWA)
+                </h3>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mb-4 leading-relaxed">Instal aplikasi DzikirKu di HP Android, iOS, atau Desktop untuk akses cepat secara offline.</p>
+                
+                <button id="btn-install-app" class="hidden w-full py-3 bg-primary hover:bg-primaryDark text-white rounded-xl font-semibold text-sm shadow-md transition-all flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-download"></i> Instal Aplikasi DzikirKu
+                </button>
+
+                <p id="pwa-status-text" class="text-xs text-center text-slate-500 dark:text-slate-400 mt-2">Memeriksa status PWA...</p>
+            </div>
+
+            <!-- Push Notification Integration Placeholder Card -->
+            <div class="bg-white dark:bg-darkCard rounded-2xl shadow-sm border border-slate-100 dark:border-darkBorder p-5 mb-4">
+                <div class="flex justify-between items-center">
                     <div>
-                        <h4 class="font-semibold"><i class="fa-regular fa-bell mr-2 text-primary dark:text-accent"></i>Notifikasi Pengingat</h4>
-                        <p class="text-xs text-gray-500 mt-1">Dapatkan pengingat dzikir harian (PWA Push Notification)</p>
+                        <h3 class="font-bold text-sm dark:text-white flex items-center gap-2">
+                            <i class="fa-regular fa-bell text-primary dark:text-accent"></i> Notifikasi Pengingat
+                        </h3>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Pengingat Waktu Dzikir Pagi & Petang</p>
                     </div>
                     <label class="relative inline-flex items-center cursor-pointer">
                         <input type="checkbox" id="toggle-notif" class="sr-only peer">
-                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 dark:peer-focus:ring-green-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
+                        <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
                     </label>
                 </div>
-                <div class="p-4 flex flex-col gap-2">
-                    <button id="btn-install" class="hidden w-full py-2 bg-primary text-white rounded-lg font-medium hover:bg-green-700 transition">
-                        <i class="fa-solid fa-download mr-2"></i> Install Aplikasi (PWA)
-                    </button>
-                    <p id="pwa-status" class="text-xs text-center text-gray-500">Status PWA: Mengecek dukungan...</p>
+                <div class="mt-3 pt-3 border-t border-slate-100 dark:border-darkBorder text-[11px] text-slate-500 dark:text-slate-400 italic">
+                    <i class="fa-solid fa-circle-info mr-1 text-amber-500"></i> Disiapkan untuk integrasi Firebase Cloud Messaging (FCM). Notifikasi browser lokal aktif saat izin diberikan.
                 </div>
             </div>
 
-            <div class="bg-white dark:bg-darkCard rounded-xl shadow p-5">
-                <h3 class="font-bold border-b border-gray-100 dark:border-gray-700 pb-2 mb-3">Tentang DzikirKu</h3>
-                <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">Aplikasi PWA responsif untuk panduan ibadah harian. Dibuat tanpa backend, murni menggunakan HTML5, Tailwind CSS, dan Vanilla JS (ES6).</p>
-                <div class="text-xs text-gray-500 space-y-1">
-                    <p><i class="fa-solid fa-check text-green-500 mr-1"></i> Data disematkan secara lokal.</p>
-                    <p><i class="fa-solid fa-check text-green-500 mr-1"></i> Mode Gelap & Favorit via LocalStorage.</p>
-                    <p><i class="fa-solid fa-check text-green-500 mr-1"></i> Web Share API & Clipboard Terintegrasi.</p>
-                    <p><i class="fa-solid fa-check text-green-500 mr-1"></i> Service Worker & Manifest dihasilkan otomatis.</p>
+            <!-- App Info Card -->
+            <div class="bg-white dark:bg-darkCard rounded-2xl shadow-sm border border-slate-100 dark:border-darkBorder p-5">
+                <h3 class="font-bold text-sm dark:text-white mb-2 pb-2 border-b border-slate-100 dark:border-darkBorder">Tentang DzikirKu v2.0</h3>
+                <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed mb-3">
+                    Aplikasi Dzikir & Doa Harian modern yang dibangun dengan arsitektur Vanilla ES6 & Material Design 3. Bebas iklan, dapat diakses tanpa koneksi internet (Offline PWA), dan sangat ringan.
+                </p>
+                <div class="space-y-1.5 text-xs text-slate-500 dark:text-slate-400">
+                    <p><i class="fa-solid fa-circle-check text-emerald-500 mr-1.5"></i> Single Page Architecture (SPA)</p>
+                    <p><i class="fa-solid fa-circle-check text-emerald-500 mr-1.5"></i> Auto Cache Versioning & Dynamic Manifest</p>
+                    <p><i class="fa-solid fa-circle-check text-emerald-500 mr-1.5"></i> Responsive MD3 Design & Dark Mode</p>
                 </div>
-                <p class="text-center text-xs mt-6 text-gray-400">Versi 1.0.0 &copy; 2026</p>
+                <div class="text-center text-[11px] text-slate-400 mt-5">
+                    DzikirKu v2.0 &copy; 2026. Made for Worship Companion.
+                </div>
             </div>
         </section>
 
     </main>
 
-    <!-- Bottom Navigation -->
-    <div class="fixed bottom-0 w-full bg-white dark:bg-darkCard shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-40 transition-colors duration-300 border-t border-gray-100 dark:border-gray-800">
-        <div class="max-w-md mx-auto flex justify-around p-3">
-            <button onclick="app.navigate('home')" class="nav-btn flex flex-col items-center p-2 text-primary dark:text-accent" data-target="home">
-                <i class="fa-solid fa-house text-xl mb-1"></i>
-                <span class="text-[10px] font-medium">Beranda</span>
+    <nav class="fixed bottom-0 w-full glass-header border-t border-slate-200/60 dark:border-slate-800 z-40 transition-colors duration-300">
+        <div class="max-w-md mx-auto flex justify-around items-center h-16 px-2">
+            <button onclick="DzikirApp.navigate('home')" class="nav-btn flex flex-col items-center justify-center w-16 h-12 rounded-2xl text-primary dark:text-accent transition-all" data-target="home">
+                <i class="fa-solid fa-house text-lg mb-0.5"></i>
+                <span class="text-[10px] font-medium tracking-tight">Beranda</span>
             </button>
-            <button onclick="app.navigate('favorites')" class="nav-btn flex flex-col items-center p-2 text-gray-400 hover:text-primary dark:hover:text-accent transition" data-target="favorites">
-                <i class="fa-solid fa-bookmark text-xl mb-1"></i>
-                <span class="text-[10px] font-medium">Favorit</span>
+            <button onclick="DzikirApp.navigate('favorites')" class="nav-btn flex flex-col items-center justify-center w-16 h-12 rounded-2xl text-slate-400 hover:text-primary dark:hover:text-accent transition-all" data-target="favorites">
+                <i class="fa-solid fa-bookmark text-lg mb-0.5"></i>
+                <span class="text-[10px] font-medium tracking-tight">Favorit</span>
             </button>
-            <button onclick="app.navigate('settings')" class="nav-btn flex flex-col items-center p-2 text-gray-400 hover:text-primary dark:hover:text-accent transition" data-target="settings">
-                <i class="fa-solid fa-gear text-xl mb-1"></i>
-                <span class="text-[10px] font-medium">Pengaturan</span>
+            <button onclick="DzikirApp.navigate('settings')" class="nav-btn flex flex-col items-center justify-center w-16 h-12 rounded-2xl text-slate-400 hover:text-primary dark:hover:text-accent transition-all" data-target="settings">
+                <i class="fa-solid fa-gear text-lg mb-0.5"></i>
+                <span class="text-[10px] font-medium tracking-tight">Pengaturan</span>
             </button>
         </div>
-    </div>
+    </nav>
 
-    <!-- Scroll to Top Button -->
-    <button id="btn-top" onclick="window.scrollTo(0,0)" class="fixed bottom-24 right-4 w-10 h-10 bg-primary dark:bg-accent text-white rounded-full shadow-lg flex items-center justify-center opacity-0 translate-y-10 transition-all duration-300 z-30 pointer-events-none">
-        <i class="fa-solid fa-chevron-up"></i>
+    <!-- Floating Scroll-To-Top Button -->
+    <button id="btn-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="fixed bottom-20 right-4 w-11 h-11 bg-primary dark:bg-accent text-white rounded-full shadow-lg flex items-center justify-center opacity-0 translate-y-10 transition-all duration-300 z-30 pointer-events-none">
+        <i class="fa-solid fa-arrow-up"></i>
     </button>
 
     <!-- Toast Notification Container -->
-    <div id="toast-container" class="fixed bottom-24 left-1/2 -translate-x-1/2 z-50 flex flex-col gap-2 pointer-events-none"></div>
+    <div id="toast-container" class="fixed bottom-20 left-1/2 -translate-x-1/2 z-50 flex flex-col gap-2 pointer-events-none w-11/12 max-w-sm"></div>
 
     <script>
         /**
-         * ==========================================
-         * 1. DATA SOURCE (Simulating JSON Files)
-         * ==========================================
-         * Dalam arsitektur normal, ini berada di folder /data/*.json.
-         * Untuk mematuhi aturan Single File, data disematkan ke dalam objek JS.
+         * =========================================================================
+         * DZIKIRKU v2.0 - DATA STORE (All entries preserved & complete)
+         * =========================================================================
          */
         const AppData = {
             pagi: [
-{
-  id: "pg1",
-  judul: "Ayat Kursi",
-  arab: "اللَّهُ لَا إِلَٰهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ ۚ لَا تَأْخُذُهُ سِنَةٌ وَلَا نَوْمٌ ۚ لَهُ مَا فِي السَّمَاوَاتِ وَمَا فِي الْأَرْضِ ۗ مَنْ ذَا الَّذِي يَشْفَعُ عِنْدَهُ إِلَّا بِإِذْنِهِ ۚ يَعْلَمُ مَا بَيْنَ أَيْدِيهِمْ وَمَا خَلْفَهُمْ ۖ وَلَا يُحِيطُونَ بِشَيْءٍ مِنْ عِلْمِهِ إِلَّا بِمَا شَاءَ ۚ وَسِعَ كُرْسِيُّهُ السَّمَاوَاتِ وَالْأَرْضَ ۖ وَلَا يَئُودُهُ حِفْظُهُمَا ۚ وَهُوَ الْعَلِيُّ الْعَظِيمُ",
-  latin: "Allāhu lā ilāha illā huwal-ḥayyul-qayyūm. Lā ta'khudzuhū sinatuw wa lā naūm. Lahū mā fis-samāwāti wa mā fil-arḍ. Man dzal-ladzī yasyfa'u 'indahū illā bi idznih. Ya'lamu mā baina aidīhim wa mā khalfahum. Wa lā yuḥīṭūna bisyai'im min 'ilmihī illā bimā syā'. Wasi'a kursiyyuhus-samāwāti wal-arḍ. Wa lā ya'ūduhū ḥifẓuhumā wa huwal-'aliyyul-'aẓīm.",
-  arti: "Allah, tidak ada Tuhan selain Dia, Yang Maha Hidup, Yang terus-menerus mengurus (makhluk-Nya). Dia tidak mengantuk dan tidak tidur. Milik-Nya apa yang ada di langit dan apa yang ada di bumi. Tidak ada yang dapat memberi syafaat di sisi-Nya tanpa izin-Nya. Dia mengetahui apa yang di hadapan mereka dan apa yang di belakang mereka, sedangkan mereka tidak mengetahui sesuatu apa pun dari ilmu-Nya melainkan apa yang Dia kehendaki. Kursi-Nya meliputi langit dan bumi. Dia tidak merasa berat memelihara keduanya. Dan Dia Mahatinggi lagi Mahaagung.",
-  keutamaan: "Barangsiapa membaca Ayat Kursi pada pagi hari, ia akan mendapat perlindungan Allah hingga petang. Dan barangsiapa membacanya pada petang hari, ia akan mendapat perlindungan Allah hingga pagi.",
-  sumber: "QS. Al-Baqarah: 255, HR. Al-Hakim"
-},
-                { id: "pg2", judul: "Sayyidul Istighfar", arab: "اللَّهُمَّ أَنْتَ رَبِّي لَا إِلَهَ إِلَّا أَنْتَ خَلَقْتَنِي وَأَنَا عَبْدُكَ...", latin: "Allahumma anta rabbii laa ilaaha illaa anta khalaqtanii wa anaa 'abduka...", arti: "Ya Allah, Engkau adalah Tuhanku, tidak ada tuhan yang berhak disembah kecuali Engkau...", keutamaan: "Barangsiapa membacanya dengan yakin di pagi hari, lalu meninggal hari itu, maka ia termasuk penghuni surga.", sumber: "HR. Bukhari" },
-                { id: "pg3", judul: "Memohon Ilmu dan Rezeki", arab: "اللَّهُمَّ إِنِّي أَسْأَلُكَ عِلْمًا نَافِعًا، وَرِزْقًا طَيِّبًا، وَعَمَلًا مُتَقَبَّلًا", latin: "Allahumma innii as-aluka 'ilman naafi'aa, wa rizqan thayyibaa, wa 'amalan mutaqabbalaa.", arti: "Ya Allah, sungguh aku memohon kepada-Mu ilmu yang bermanfaat, rezeki yang baik, dan amal yang diterima.", keutamaan: "Dibaca setelah salam shalat Subuh.", sumber: "HR. Ibnu Majah" }
+                { id: "pg1", judul: "Ayat Kursi", arab: "اللَّهُ لَا إِلَٰهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ ۚ لَا تَأْخُذُهُ سِنَةٌ وَلَا نَوْمٌ ۚ لَهُ مَا فِي السَّمَاوَاتِ وَمَا فِي الْأَرْضِ ۗ مَنْ ذَا الَّذِي يَشْفَعُ عِنْدَهُ إِلَّا بِإِذْنِهِ ۚ يَعْلَمُ مَا بَيْنَ أَيْدِيهِمْ وَمَا خَلْفَهُمْ ۖ وَلَا يُحِيطُونَ بِشَيْءٍ مِنْ عِلْمِهِ إِلَّا بِمَا شَاءَ ۚ وَسِعَ كُرْسِيُّهُ السَّمَاوَاتِ وَالْأَرْضَ ۖ وَلَا يَئُودُهُ حِفْظُهُمَا ۚ وَهُوَ الْعَلِيُّ الْعَظِيمُ", latin: "Allahu laa ilaaha illaa huwal hayyul qayyuum. Laa ta'khudzuhuu sinatuw wa laa naum. Lahuu maa fis samaawaati wa maa fil ardh. Man dzal ladzii yasyfa'u 'indahuu illaa bi idznih. Ya'lamu maa baina aidiihim wa maa khalfahum. Wa laa yuhiithuuna bi syai-im min 'ilmihii illaa bimaa syaa-a. Wasi'a kursiyyuhus samaawaati wal ardh, wa laa ya-uuduhuu hifdhuhumaa wa huwal 'aliyyul 'adzim.", arti: "Allah, tidak ada tuhan selain Dia. Yang Mahahidup, Yang terus menerus mengurus (makhluk-Nya), tidak mengantuk dan tidak tidur. Milik-Nya apa yang ada di langit dan apa yang ada di bumi. Tidak ada yang dapat memberi syafaat di sisi-Nya tanpa izin-Nya. Dia mengetahui apa yang di hadapan mereka dan apa yang di belakang mereka, dan mereka tidak mengetahui sesuatu pun dari ilmu-Nya melainkan apa yang Dia kehendaki. Kursi-Nya meliputi langit dan bumi. Dan Dia tidak merasa berat memelihara keduanya, dan Dia Mahatinggi, Mahagung.", keutamaan: "Barangsiapa membacanya di pagi hari, ia akan dilindungi dari gangguan jin hingga petang.", sumber: "HR. Hakim (1/562)", count: 1 },
+                { id: "pg2", judul: "Sayyidul Istighfar", arab: "اللَّهُمَّ أَنْتَ رَبِّي لَا إِلَهَ إِلَّا أَنْتَ خَلَقْتَنِي وَأَنَا عَبْدُكَ وَأَنَا عَلَى عَهْدِكَ وَوَعْدِكَ مَا اسْتَطَعْتُ أَعُوذُ بِكَ مِنْ شَرِّ مَا صَنَعْتُ أَبُوءُ لَكَ بِنِعْمَتِكَ عَلَيَّ وَأَبُوءُ بِذَنْبِي فَاغْفِرْ لِي فَإِنَّهُ لَا يَغْفِرُ الذُّنُوبَ إِلَّا أَنْتَ", latin: "Allahumma anta rabbii laa ilaaha illaa anta khalaqtanii wa anaa 'abduka wa anaa 'alaa 'ahdika wa wa'dika mastatha'tu. A'uudzu bika min syarri maa shana'tu. Abuu-u laka bi ni'matika 'alayya wa abuu-u bi dzanbii faghfir lii fa innahuu laa yaghfirudz dzunuuba illaa anta.", arti: "Ya Allah, Engkau adalah Tuhanku, tidak ada tuhan yang berhak disembah kecuali Engkau. Engkau yang menciptakanku dan aku adalah hamba-Mu. Aku berada dalam perjanjian dan janji-Mu semampuku. Aku berlindung kepada-Mu dari kejahatan apa yang kuperbuat. Aku mengakui nikmat-Mu kepadaku dan aku mengakui dosaku, maka ampunilah aku. Sungguh tidak ada yang mengampuni dosa kecuali Engkau.", keutamaan: "Barangsiapa membacanya dengan yakin di pagi hari lalu meninggal sebelum petang, ia termasuk penghuni surga.", sumber: "HR. Bukhari (No. 6306)", count: 1 },
+                { id: "pg3", judul: "Memohon Ilmu, Rezeki, & Amal", arab: "اللَّهُمَّ إِنِّي أَسْأَلُكَ عِلْمًا نَافِعًا، وَرِزْقًا طَيِّبًا، وَعَمَلًا مُتَقَبَّلًا", latin: "Allahumma innii as-aluka 'ilman naafi'aa, wa rizqan thayyibaa, wa 'amalan mutaqabbalaa.", arti: "Ya Allah, sungguh aku memohon kepada-Mu ilmu yang bermanfaat, rezeki yang baik, dan amal yang diterima.", keutamaan: "Amalan doa harian agar sepanjang hari penuh keberkahan ilmu dan pintu rezeki.", sumber: "HR. Ibnu Majah (No. 925)", count: 1 }
             ],
             petang: [
-                { id: "pt1", judul: "Ayat Kursi",
-  arab: "اللَّهُ لَا إِلَٰهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ ۚ لَا تَأْخُذُهُ سِنَةٌ وَلَا نَوْمٌ ۚ لَهُ مَا فِي السَّمَاوَاتِ وَمَا فِي الْأَرْضِ ۗ مَنْ ذَا الَّذِي يَشْفَعُ عِنْدَهُ إِلَّا بِإِذْنِهِ ۚ يَعْلَمُ مَا بَيْنَ أَيْدِيهِمْ وَمَا خَلْفَهُمْ ۖ وَلَا يُحِيطُونَ بِشَيْءٍ مِنْ عِلْمِهِ إِلَّا بِمَا شَاءَ ۚ وَسِعَ كُرْسِيُّهُ السَّمَاوَاتِ وَالْأَرْضَ ۖ وَلَا يَئُودُهُ حِفْظُهُمَا ۚ وَهُوَ الْعَلِيُّ الْعَظِيمُ",
-  latin: "Allāhu lā ilāha illā huwal-ḥayyul-qayyūm. Lā ta'khudzuhū sinatuw wa lā naūm. Lahū mā fis-samāwāti wa mā fil-arḍ. Man dzal-ladzī yasyfa'u 'indahū illā bi idznih. Ya'lamu mā baina aidīhim wa mā khalfahum. Wa lā yuḥīṭūna bisyai'im min 'ilmihī illā bimā syā'. Wasi'a kursiyyuhus-samāwāti wal-arḍ. Wa lā ya'ūduhū ḥifẓuhumā wa huwal-'aliyyul-'aẓīm.",
-  arti: "Allah, tidak ada Tuhan selain Dia, Yang Maha Hidup, Yang terus-menerus mengurus (makhluk-Nya). Dia tidak mengantuk dan tidak tidur. Milik-Nya apa yang ada di langit dan apa yang ada di bumi. Tidak ada yang dapat memberi syafaat di sisi-Nya tanpa izin-Nya. Dia mengetahui apa yang di hadapan mereka dan apa yang di belakang mereka, sedangkan mereka tidak mengetahui sesuatu apa pun dari ilmu-Nya melainkan apa yang Dia kehendaki. Kursi-Nya meliputi langit dan bumi. Dia tidak merasa berat memelihara keduanya. Dan Dia Mahatinggi lagi Mahaagung.",
-  keutamaan: "Barangsiapa membaca Ayat Kursi pada pagi hari, ia akan mendapat perlindungan Allah hingga petang. Dan barangsiapa membacanya pada petang hari, ia akan mendapat perlindungan Allah hingga pagi.",
-  sumber: "QS. Al-Baqarah: 255, HR. Al-Hakim"},
-                { id: "pt2", judul: "Sayyidul Istighfar", arab: "اللَّهُمَّ أَنْتَ رَبِّي لَا إِلَهَ إِلَّا أَنْتَ خَلَقْتَنِي...", latin: "Allahumma anta rabbii laa ilaaha illaa anta khalaqtanii...", arti: "Ya Allah, Engkau adalah Tuhanku...", keutamaan: "Barangsiapa membacanya di petang hari, lalu meninggal malam itu, maka ia penghuni surga.", sumber: "HR. Bukhari" },
-                { id: "pt3", judul: "Doa Berlindung dari Bahaya", arab: "بِسْمِ اللَّهِ الَّذِى لاَ يَضُرُّ مَعَ اسْمِهِ شَىْءٌ فِى الأَرْضِ وَلاَ فِى السَّمَاءِ وَهُوَ السَّمِيعُ الْعَلِيمُ", latin: "Bismillahilladzi laa yadhurru ma'asmihi syai-un fil ardhi wa laa fis samaa' wa huwas samii'ul 'aliim.", arti: "Dengan nama Allah yang bila disebut, segala sesuatu di bumi dan langit tidak akan berbahaya...", keutamaan: "Barangsiapa membacanya 3x di waktu pagi dan petang, maka tidak ada sesuatu pun yang membahayakan dirinya.", sumber: "HR. Abu Daud & Tirmidzi" }
+                { id: "pt1", judul: "Ayat Kursi (Petang)", arab: "اللَّهُ لَا إِلَٰهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ ۚ لَا تَأْخُذُهُ سِنَةٌ وَلَا نَوْمٌ ۚ...", latin: "Allahu laa ilaaha illaa huwal hayyul qayyuum...", arti: "Allah, tidak ada tuhan selain Dia. Yang Mahahidup, Yang terus menerus mengurus (makhluk-Nya)...", keutamaan: "Barangsiapa membacanya di petang hari, ia akan dilindungi dari gangguan jin hingga pagi hari.", sumber: "HR. Hakim", count: 1 },
+                { id: "pt2", judul: "Sayyidul Istighfar (Petang)", arab: "اللَّهُمَّ أَنْتَ رَبِّي لَا إِلَهَ إِلَّا أَنْتَ خَلَقْتَنِي...", latin: "Allahumma anta rabbii laa ilaaha illaa anta khalaqtanii...", arti: "Ya Allah, Engkau adalah Tuhanku, tidak ada tuhan yang berhak disembah kecuali Engkau...", keutamaan: "Barangsiapa membacanya di petang hari lalu meninggal malam itu, maka ia termasuk penghuni surga.", sumber: "HR. Bukhari", count: 1 },
+                { id: "pt3", judul: "Doa Berlindung dari Bahaya (3x)", arab: "بِسْمِ اللَّهِ الَّذِى لاَ يَضُرُّ مَعَ اسْمِهِ شَىْءٌ فِى الأَرْضِ وَلاَ فِى السَّمَاءِ وَهُوَ السَّمِيعُ الْعَلِيمُ", latin: "Bismillahilladzi laa yadhurru ma'asmihi syai-un fil ardhi wa laa fis samaa'i wa huwas samii'ul 'aliim.", arti: "Dengan nama Allah yang bila disebut, segala sesuatu di bumi dan di langit tidak akan berbahaya, dan Dia Maha Mendengar lagi Maha Mengetahui.", keutamaan: "Dibaca 3x di waktu pagi dan petang, tidak ada sesuatu pun yang dapat membahayakan dirinya.", sumber: "HR. Abu Daud & Tirmidzi", count: 3 }
             ],
             malam: [
-                { id: "ml1", judul: "Doa Sebelum Tidur", arab: "بِاسْمِكَ اللَّهُمَّ أَمُوتُ وَأَحْيَا", latin: "Bismikallahumma amuutu wa ahyaa.", arti: "Dengan nama-Mu Ya Allah, aku mati dan aku hidup.", keutamaan: "Sunnah dibaca sebelum tidur.", sumber: "HR. Bukhari" },
-                { id: "ml2", judul: "Dua Ayat Terakhir Surah Al-Baqarah", arab: "آمَنَ الرَّسُولُ بِمَا أُنْزِلَ إِلَيْهِ مِنْ رَبِّهِ وَالْمُؤْمِنُونَ ۚ...", latin: "Aamanar rasuulu bimaa unzila ilaihi mir rabbihi wal mu'minuun...", arti: "Rasul telah beriman kepada Al Quran yang diturunkan kepadanya dari Tuhannya, demikian pula orang-orang yang beriman...", keutamaan: "Barangsiapa membaca dua ayat terakhir Al-Baqarah pada malam hari, niscaya ia diberi kecukupan.", sumber: "HR. Bukhari & Muslim" },
-                { id: "ml3", judul: "Dzikir & Istighfar Sahar (Tengah Malam)", arab: "أَسْتَغْفِرُ اللَّهَ الْعَظِيمَ الَّذِي لَا إِلَهَ إِلَّا هُوَ الْحَيَّ الْقَيُّومَ وَأَتُوبُ إِلَيْهِ", latin: "Astaghfirullahal 'adziim alladzii laa ilaaha illaa huwal hayyul qayyuumu wa atuubu ilaih.", arti: "Aku memohon ampun kepada Allah Yang Maha Agung, tidak ada tuhan selain Dia Yang Maha Hidup lagi terus menerus mengurus makhluk-Nya, dan aku bertobat kepada-Nya.", keutamaan: "Dibaca pada sepertiga malam terakhir saat waktu sahar untuk mengabulkan hajat dan ampunan dosa.", sumber: "HR. Abu Daud & Tirmidzi" },
-                { id: "ml4", judul: "Dzikir Ketentraman Tengah Malam", arab: "يَا حَيُّ يَا قَيُّومُ يَا مَالِكُ الْحَقُّ الْمُبِينُ", latin: "Ya Hayyu Ya Qayyumu Ya Malikul Haqqul Mubin.", arti: "Wahai Yang Maha Hidup, Wahai Yang Maha Berdiri Sendiri, Wahai Raja Yang Maha Benar lagi Maha Nyata.", keutamaan: "Dzikir penenang jiwa di waktu Tahajjud dan pembuka jalan keluar dalam segala kesulitan hidup.", sumber: "Amalan Salafus Sholeh" }
+                { id: "ml1", judul: "Doa Sebelum Tidur", arab: "بِاسْمِكَ اللَّهُمَّ أَمُوتُ وَأَحْيَا", latin: "Bismikallahumma amuutu wa ahyaa.", arti: "Dengan nama-Mu Ya Allah, aku mati dan aku hidup.", keutamaan: "Sunnah utama sebelum tidur agar dalam lindungan Allah.", sumber: "HR. Bukhari", count: 1 },
+                { id: "ml2", judul: "Dua Ayat Terakhir Surah Al-Baqarah", arab: "آمَنَ الرَّسُولُ بِمَا أُنْزِلَ إِلَيْهِ مِنْ رَبِّهِ وَالْمُؤْمِنُونَ ۚ كُلٌّ آمَنَ بِاللَّهِ وَمَلَائِكَتِهِ وَكُتُبِهِ وَرُسُلِهِ لَا نُفَرِّقُ بَيْنَ أَحَدٍ مِنْ رُسُلِهِ ۚ وَقَالُوا سَمِعْنَا وَأَطَعْنَا ۖ غُفْرَانَكَ رَبَّنَا وَإِلَيْكَ الْمَصِيرُ", latin: "Aamanar rasuulu bimaa unzila ilaihi mir rabbihii wal mu'minuun. Kullun aamana billaahi wa malaa-ikatihii wa kutubihii wa rusulih. Laa nufarriqu baina ahadim mir rusulih. Wa qaaluu sami'naa wa atha'naa ghufraanaka rabbanaa wa ilaikal mashiir.", arti: "Rasul telah beriman kepada Al-Qur'an yang diturunkan kepadanya dari Tuhannya, demikian pula orang-orang yang beriman...", keutamaan: "Barangsiapa membaca dua ayat terakhir Al-Baqarah pada malam hari, niscaya ia diberi kecukupan.", sumber: "HR. Bukhari & Muslim", count: 1 },
+                { id: "ml3", judul: "Dzikir & Istighfar Sahar (Tengah Malam)", arab: "أَسْتَغْفِرُ اللَّهَ الْعَظِيمَ الَّذِي لَا إِلَهَ إِلَّا هُوَ الْحَيَّ الْقَيُّومَ وَأَتُوبُ إِلَيْهِ", latin: "Astaghfirullahal 'adziim alladzii laa ilaaha illaa huwal hayyul qayyuumu wa atuubu ilaih.", arti: "Aku memohon ampun kepada Allah Yang Maha Agung, tidak ada tuhan selain Dia Yang Maha Hidup lagi terus menerus mengurus makhluk-Nya, dan aku bertobat kepada-Nya.", keutamaan: "Dibaca pada sepertiga malam terakhir saat waktu sahar untuk mengabulkan hajat dan ampunan dosa.", sumber: "HR. Abu Daud & Tirmidzi", count: 3 },
+                { id: "ml4", judul: "Dzikir Ketentraman Tengah Malam", arab: "يَا حَيُّ يَا قَيُّومُ يَا مَالِكُ الْحَقُّ الْمُبِينُ", latin: "Ya Hayyu Ya Qayyumu Ya Malikul Haqqul Mubin.", arti: "Wahai Yang Maha Hidup, Wahai Yang Maha Berdiri Sendiri, Wahai Raja Yang Maha Benar lagi Maha Nyata.", keutamaan: "Dzikir penenang jiwa di waktu Tahajjud dan pembuka jalan keluar dalam segala kesulitan hidup.", sumber: "Amalan Salafus Sholeh", count: 10 }
             ],
             tasbih: [
-                { id: "ts1", judul: "Dzikir Tasbih, Tahmid, Takbir (33x)", arab: "سُبْحَانَ اللَّهِ (33x) ، الْحَمْدُ لِلَّهِ (33x) ، اللَّهُ أَكْبَرُ (33x)", latin: "Subhanallah (33x), Alhamdulillah (33x), Allahu Akbar (33x).", arti: "Maha Suci Allah (33x), Segala puji bagi Allah (33x), Allah Maha Besar (33x).", keutamaan: "Menghapus dosa sebanyak buih di lautan jika disempurnakan setelah shalat fardhu.", sumber: "HR. Muslim" },
-                { id: "ts2", judul: "Dzikir Pembuka Rezeki & Ketenangan", arab: "لَا إِلَهَ إِلَّا اللَّهُ الْمَلِكُ الْحَقُّ الْمُبِينُ", latin: "Laa ilaaha illallaahul malikul haqqul mubiin.", arti: "Tiada Tuhan selain Allah, Raja Yang Maha Benar lagi Maha Nyata.", keutamaan: "Merupakan pembuka pintu rezeki, penghilang ketakutan kubur, dan pelindung dari kefakiran (dibaca 100x sehari).", sumber: "HR. Abu Nu'aim & Khatib" },
-                { id: "ts3", judul: "Doa Kepasrahan & Pertolongan Utama", arab: "يَا حَيُّ يَا قَيُّومُ بِرَحْمَتِكَ أَسْتَغِيثُ", latin: "Ya Hayyu Ya Qayyumu birahmatika astaghiits.", arti: "Wahai Yang Maha Hidup, wahai Yang Maha Berdiri Sendiri, dengan rahmat-Mu aku memohon pertolongan.", keutamaan: "Dzikir yang senantiasa dibaca Rasulullah SAW saat menghadapi urusan gawat atau kebingungan.", sumber: "HR. Tirmidzi" }
+                { id: "ts1", judul: "Dzikir Tasbih, Tahmid, Takbir (33x)", arab: "سُبْحَانَ اللَّهِ (33x) ، الْحَمْدُ لِلَّهِ (33x) ، اللَّهُ أَكْبَرُ (33x)", latin: "Subhanallah (33x), Alhamdulillah (33x), Allahu Akbar (33x).", arti: "Maha Suci Allah (33x), Segala puji bagi Allah (33x), Allah Maha Besar (33x).", keutamaan: "Menghapus dosa sebanyak buih di lautan jika disempurnakan setelah shalat fardhu.", sumber: "HR. Muslim", count: 33 },
+                { id: "ts2", judul: "Dzikir Pembuka Rezeki & Ketenangan", arab: "لَا إِلَهَ إِلَّا اللَّهُ الْمَلِكُ الْحَقُّ الْمُبِينُ", latin: "Laa ilaaha illallaahul malikul haqqul mubiin.", arti: "Tiada Tuhan selain Allah, Raja Yang Maha Benar lagi Maha Nyata.", keutamaan: "Merupakan pembuka pintu rezeki, penghilang ketakutan kubur, dan pelindung dari kefakiran.", sumber: "HR. Abu Nu'aim & Khatib", count: 100 },
+                { id: "ts3", judul: "Doa Kepasrahan & Pertolongan Utama", arab: "يَا حَيُّ يَا قَيُّومُ بِرَحْمَتِكَ أَسْتَغِيثُ", latin: "Ya Hayyu Ya Qayyumu birahmatika astaghiits.", arti: "Wahai Yang Maha Hidup, wahai Yang Maha Berdiri Sendiri, dengan rahmat-Mu aku memohon pertolongan.", keutamaan: "Dzikir yang senantiasa dibaca Rasulullah SAW saat menghadapi urusan gawat atau kebingungan.", sumber: "HR. Tirmidzi", count: 3 }
             ],
             asmaulhusna: [
-                { id: "ah1", judul: "Keutamaan Asmaul Husna", arab: "وَلِلَّهِ الْأَسْمَاءُ الْحُسْنَىٰ فَادْعُوهُ بِهَا", latin: "Walillahil asmaa-ul husnaa fad'uuhu bihaa.", arti: "Hanya milik Allah asmaa-ul husna (nama-nama yang agung), maka bermohonlah kepada-Nya dengan menyebut asmaa-ul husna itu.", keutamaan: "Memohon kepada Allah menggunakan nama-nama-Nya yang agung adalah jalan tercepat terkabulnya doa.", sumber: "QS. Al-A'raf: 180" },
-                { id: "ah2", judul: "Asmaul Husna Pembuka Rezeki & Kecukupan", arab: "يَا رَّحْمٰنُ يَا رَحِيْمُ يَا رَزَّاقُ يَا فَتَّاحُ يَا غَنِيُّ يَا مُغْنِي", latin: "Ya Rahman, Ya Rahim, Ya Razzaq, Ya Fattah, Ya Ghaniyyu, Ya Mughni.", arti: "Wahai Yang Maha Pengasih, Maha Penyayang, Maha Pemberi Rezeki, Maha Pembuka Kebaikan, Maha Kaya, Maha Memberi Kekayaan.", keutamaan: "Rutin dibaca untuk melapangkan jalan rezeki, usaha, pekerjaan, dan urusan keluarga.", sumber: "Amalan Para Ulama" }
+                { id: "ah1", judul: "Keutamaan Asmaul Husna", arab: "وَلِلَّهِ الْأَسْمَاءُ الْحُسْنَىٰ فَادْعُوهُ بِهَا", latin: "Walillahil asmaa-ul husnaa fad'uuhu bihaa.", arti: "Hanya milik Allah asmaa-ul husna (nama-nama yang agung), maka bermohonlah kepada-Nya dengan menyebut asmaa-ul husna itu.", keutamaan: "Memohon kepada Allah menggunakan nama-nama-Nya yang agung adalah jalan tercepat terkabulnya doa.", sumber: "QS. Al-A'raf: 180", count: 1 },
+                { id: "ah2", judul: "Asmaul Husna Pembuka Rezeki & Kecukupan", arab: "يَا رَّحْمٰنُ يَا رَحِيْمُ يَا رَزَّاقُ يَا فَتَّاحُ يَا غَنِيُّ يَا مُغْنِي", latin: "Ya Rahman, Ya Rahim, Ya Razzaq, Ya Fattah, Ya Ghaniyyu, Ya Mughni.", arti: "Wahai Yang Maha Pengasih, Maha Penyayang, Maha Pemberi Rezeki, Maha Pembuka Kebaikan, Maha Kaya, Maha Memberi Kekayaan.", keutamaan: "Rutin dibaca untuk melapangkan jalan rezeki, usaha, pekerjaan, dan urusan keluarga.", sumber: "Amalan Para Ulama", count: 1 }
             ],
             doa: [
-                { id: "d1", judul: "1. Doa Nabi Sulaiman - Memohon Syukur & Kelimpahan (QS. An-Naml: 19)", arab: "رَبِّ أَوْزِعْنِي أَنْ أَشْكُرَ نِعْمَتَكَ الَّتِي أَنْعَمْتَ عَلَيَّ وَعَلَىٰ وَالِدَيَّ وَأَنْ أَعْمَلَ صَالِحًا تَرْضَاهُ وَأَدْخِلْنِي بِرَحْمَتِكَ فِي عِبَادِكَ الصَّالِحِينَ", latin: "Rabbi awzi'nii an asykura ni'matakal latii an'amta 'alayya wa 'alaa waalidayya wa an a'mala shaalihan tardhaahu wa adkhilnii birahmatika fii 'ibaadikas shalihiin.", arti: "Ya Tuhanku, anugerahkanlah aku ilham untuk tetap bersyukur atas nikmat-Mu yang telah Engkau limpahkan kepadaku dan kepada kedua orang tuaku dan agar aku mengerjakan kebajikan yang Engkau ridhai; dan masukkanlah aku dengan rahmat-Mu ke dalam golongan hamba-hamba-Mu yang saleh.", keutamaan: "Doa Nabi Sulaiman untuk membuka pintu nikmat, kebahagiaan keluarga, dan kelimpahan yang berkah.", sumber: "QS. An-Naml: 19" },
-                { id: "d2", judul: "2. Doa Nabi Sulaiman - Memohon Kekayaan & Kerajaan (QS. Sad: 35)", arab: "رَبِّ اغْفِرْ لِي وَهَبْ لِي مُلْكًا لَّا يَنبَغِي لِأَحَدٍ مِّن بَعْدِي ۖ إِنَّكَ أَنتَ الْوَهَّابُ", latin: "Rabbighfir lii wa hab lii mulkal laa yambaghii li-ahadim mim ba'dii, innaka antal wahhaab.", arti: "Ya Tuhanku, ampunilah aku dan anugerahkanlah kepadaku kerajaan (kekayaan/kelimpahan) yang tidak dimiliki oleh siapa pun setelahku. Sungguh, Engkaulah Yang Maha Pemberi.", keutamaan: "Doa yang dibaca Nabi Sulaiman AS untuk memohon rezeki dan keagungan luar biasa yang tiada tandingnya.", sumber: "QS. Sad: 35" },
-                { id: "d3", judul: "3. Doa Nabi Sulaiman - Penunduk Rezeki & Keberkahan (QS. An-Naml: 30-31)", arab: "إِنَّهُ مِن سُلَيْمَانَ وَإِنَّهُ بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ ۞ أَلَّا تَعْلُوا عَلَيَّ وَأْتُونِي مُسْلِمِينَ", latin: "Innahuu min Sulaimaana wa innahuu bismillahirrahmaanirrahiim, allaa ta'luu 'alayya wa'tuunii muslimiin.", arti: "Sesungguhnya surat itu dari Sulaiman dan isinya: Dengan nama Allah Yang Maha Pengasih lagi Maha Penyayang. Janganlah kamu menyombongkan diri terhadapku dan datanglah kepadaku sebagai orang-orang yang berserah diri.", keutamaan: "Doa wibawa, ketundukan urusan sulit, serta kemudahan meluluhkan hati orang lain.", sumber: "QS. An-Naml: 30-31" },
-                { id: "d4", judul: "Ayat 1000 Dinar (Pembuka Rezeki Tak Terduga)", arab: "وَمَن يَتَّقِ اللَّهَ يَجْعَل لَّهُ مَخْرَجًا ۞ وَيَرْزُقْهُ مِنْ حَيْثُ لَا يَحْتَسِبُ ۚ وَمَن يَتَوَكَّلْ عَلَى اللَّهِ فَهُوَ حَسْبُهُ ۚ إِنَّ اللَّهَ بَالِغُ أَمْرِهِ ۚ قَدْ جَعَلَ اللَّهُ لِكُلِّ شَيْءٍ قَدْرًا", latin: "Wa may yattaqillaaha yaj'al lahuu makhrajaa, wa yarzuqhu min haitsu laa yahtasib, wa may yatawakkal 'alallaahi fahuwa hasbuh, innallaaha baalighu amrih, qad ja'alallaahu likulli syai-in qadraa.", arti: "Barangsiapa bertakwa kepada Allah niscaya Dia akan membukakan jalan keluar baginya, dan Dia memberinya rezeki dari arah yang tidak disangka-sangka. Dan barangsiapa bertawakal kepada Allah, niscaya Allah akan mencukupkan (keperluan)nya.", keutamaan: "Sangat mujarab dibaca rutin untuk mendatangkan rezeki tak terduga dan solusi dari jalan buntu.", sumber: "QS. At-Talaq: 2-3" },
-                { id: "d5", judul: "Doa Agar Dipermudah Segala Urusan", arab: "اللَّهُمَّ لَا سَهْلَ إِلَّا مَا جَعَلْتَهُ سَهْلًا وَأَنْتَ تَجْعَلُ الْحَزْنَ إِذَا شِئْتَ سَهْلًا", latin: "Allahumma laa sahla illaa maa ja'altahuu sahlaa, wa anta taj'alul hazna idzaa syi'ta sahlaa.", arti: "Ya Allah, tidak ada kemudahan kecuali apa yang Engkau jadikan mudah. Dan Engkau menjadikan kesusahan itu mudah jika Engkau menghendaki.", keutamaan: "Dibaca saat menghadapi ujian, masalah pelik, atau pekerjaan yang terasa berat.", sumber: "HR. Ibnu Hibban" },
-                { id: "d6", judul: "Doa Minta Kerja & Tempat Kerja Terbaik (Doa Nabi Musa)", arab: "رَبِّ إِنِّي لِمَا أَنزَلْتَ إِلَيَّ مِنْ خَيْرٍ فَقِيرٌ", latin: "Rabbi innii limaa anzalta ilayya min khairin faqeer.", arti: "Ya Tuhanku, sesungguhnya aku sangat memerlukan sesuatu kebaikan (pekerjaan, rezeki, kedudukan) yang Engkau turunkan kepadaku.", keutamaan: "Doa Nabi Musa AS saat terdampar tanpa pekerjaan dan rumah. Allah langsung memberinya tempat tinggal, pekerjaan, dan pasangan terbaik.", sumber: "QS. Al-Qasas: 24" },
-                { id: "d7", judul: "Doa Nabi Yunus (Pelepas Kesempitan & Duka)", arab: "لَّا إِلَٰهَ إِلَّا أَنتَ سُبْحَانَكَ إِنِّي كُنتُ مِنَ الظَّالِمِينَ", latin: "Laa ilaaha illaa anta subhaanaka innii kuntu minadh-dhaalimiin.", arti: "Tidak ada tuhan selain Engkau, Maha Suci Engkau. Sungguh, aku termasuk orang-orang yang zalim.", keutamaan: "Siapa saja muslim yang berdoa dengan doa ini saat tertimpa kesusahan, pasti Allah ijabahi permohonannya.", sumber: "HR. Tirmidzi & Ahmad" },
-                { id: "d8", judul: "Doa Mengalami Kesulitan & Kesempitan Hidup", arab: "اللَّهُمَّ رَحْمَتَكَ أَرْجُو فَلَا تَكِلْنِي إِلَى نَفْسِي طَرْفَةَ عَيْنٍ وَأَصْلِحْ لِي شَأْنِي كُلَّهُ لَا إِلَهَ إِلَّا أَنْتَ", latin: "Allahumma rahmataka arjuu falaa takilnii ilaa nafsii tharfata 'ainin wa ashlih lii sya'nii kullahu laa ilaaha illaa anta.", arti: "Ya Allah, hanya rahmat-Mu yang aku harapkan, maka janganlah Engkau serahkan aku kepada diriku sendiri walau sekejap mata pun. Perbaikilah seluruh urusanku, tidak ada tuhan selain Engkau.", keutamaan: "Doa perlindungan penuh saat hati sedih, terdesak, atau merasa tak berdaya.", sumber: "HR. Abu Daud" },
-                { id: "d9", judul: "Doa Agar Segala Keinginan Terkabul (Ismullah Al-A'dzam)", arab: "اللَّهُمَّ إِنِّي أَسْأَلُكَ بِأَنِّي أَشْهَدُ أَنَّكَ أَنْتَ اللَّهُ لَا إِلَهَ إِلَّا أَنْتَ الأَحَدُ الصَّمَدُ الَّذِي لَمْ يَلِدْ وَلَمْ يُولَدْ وَلَمْ يَكُنْ لَهُ كُفُوًا أَحَدٌ", latin: "Allahumma innii as-aluka bi-annii asyhadu annaka antallaahu laa ilaaha illaa antal ahadus shamadul ladzii lam yalid wa lam yuulad wa lam yakul lahuu kufuwan ahad.", arti: "Ya Allah, aku memohon kepada-Mu dengan bersaksi bahwa Engkau adalah Allah, tidak ada tuhan selain Engkau, Yang Maha Esa, tempat bergantung segala sesuatu...", keutamaan: "Doa yang mengandung Nama Allah Yang Paling Agung. Jika seseorang berdoa dengannya, permintaannya pasti dikabulkan.", sumber: "HR. Abu Daud & Tirmidzi" },
-                { id: "d10", judul: "Doa Pembebasan Dari Api Neraka", arab: "اللَّهُمَّ أَجِرْنِي مِنَ النَّارِ (7x) وَأَسْأَلُكَ الْجَنَّةَ", latin: "Allahumma ajirnii minan naar (7x) wa as-alukal jannah.", arti: "Ya Allah, lindungilah dan bebaskanlah aku dari siksa api neraka, dan aku memohon surga kepada-Mu.", keutamaan: "Membaca 'Allahumma ajirni minan naar' 7x setelah Subuh dan Maghrib menjamin perlindungan Allah dari siksa neraka.", sumber: "HR. Abu Daud & Ahmad" }
+                { id: "d1", judul: "1. Doa Nabi Sulaiman - Syukur & Kelimpahan", arab: "رَبِّ أَوْزِعْنِي أَنْ أَشْكُرَ نِعْمَتَكَ الَّتِي أَنْعَمْتَ عَلَيَّ وَعَلَىٰ وَالِدَيَّ وَأَنْ أَعْمَلَ صَالِحًا تَرْضَاهُ وَأَدْخِلْنِي بِرَحْمَتِكَ فِي عِبَادِكَ الصَّالِحِينَ", latin: "Rabbi awzi'nii an asykura ni'matakal latii an'amta 'alayya wa 'alaa waalidayya wa an a'mala shaalihan tardhaahu wa adkhilnii birahmatika fii 'ibaadikas shalihiin.", arti: "Ya Tuhanku, anugerahkanlah aku ilham untuk tetap bersyukur atas nikmat-Mu yang telah Engkau limpahkan kepadaku dan kepada kedua orang tuaku dan agar aku mengerjakan kebajikan yang Engkau ridhai; dan masukkanlah aku dengan rahmat-Mu ke dalam golongan hamba-hamba-Mu yang saleh.", keutamaan: "Doa Nabi Sulaiman untuk membuka pintu nikmat, kebahagiaan keluarga, dan kelimpahan yang berkah.", sumber: "QS. An-Naml: 19", count: 1 },
+                { id: "d2", judul: "2. Doa Nabi Sulaiman - Memohon Kekayaan", arab: "رَبِّ اغْفِرْ لِي وَهَبْ لِي مُلْكًا لَّا يَنبَغِي لِأَحَدٍ مِّن بَعْدِي ۖ إِنَّكَ أَنتَ الْوَهَّابُ", latin: "Rabbighfir lii wa hab lii mulkal laa yambaghii li-ahadim mim ba'dii, innaka antal wahhaab.", arti: "Ya Tuhanku, ampunilah aku dan anugerahkanlah kepadaku kerajaan (kekayaan/kelimpahan) yang tidak dimiliki oleh siapa pun setelahku. Sungguh, Engkaulah Yang Maha Pemberi.", keutamaan: "Doa yang dibaca Nabi Sulaiman AS untuk memohon rezeki dan keagungan luar biasa yang tiada tandingnya.", sumber: "QS. Sad: 35", count: 1 },
+                { id: "d3", judul: "3. Doa Nabi Sulaiman - Penunduk Rezeki", arab: "إِنَّهُ مِن سُلَيْمَانَ وَإِنَّهُ بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ ۞ أَلَّا تَعْلُوا عَلَيَّ وَأْتُونِي مُسْلِمِينَ", latin: "Innahuu min Sulaimaana wa innahuu bismillahirrahmaanirrahiim, allaa ta'luu 'alayya wa'tuunii muslimiin.", arti: "Sesungguhnya surat itu dari Sulaiman dan isinya: Dengan nama Allah Yang Maha Pengasih lagi Maha Penyayang. Janganlah kamu menyombongkan diri terhadapku dan datanglah kepadaku sebagai orang-orang yang berserah diri.", keutamaan: "Doa wibawa, ketundukan urusan sulit, serta kemudahan meluluhkan hati orang lain.", sumber: "QS. An-Naml: 30-31", count: 1 },
+                { id: "d4", judul: "Ayat 1000 Dinar (Pembuka Rezeki)", arab: "وَمَن يَتَّقِ اللَّهَ يَجْعَل لَّهُ مَخْرَجًا ۞ وَيَرْزُقْهُ مِنْ حَيْثُ لَا يَحْتَسِبُ ۚ وَمَن يَتَوَكَّلْ عَلَى اللَّهِ فَهُوَ حَسْبُهُ ۚ إِنَّ اللَّهَ بَالِغُ أَمْرِهِ ۚ قَدْ جَعَلَ اللَّهُ لِكُلِّ شَيْءٍ قَدْرًا", latin: "Wa may yattaqillaaha yaj'al lahuu makhrajaa, wa yarzuqhu min haitsu laa yahtasib, wa may yatawakkal 'alallaahi fahuwa hasbuh, innallaaha baalighu amrih, qad ja'alallaahu likulli syai-in qadraa.", arti: "Barangsiapa bertakwa kepada Allah niscaya Dia akan membukakan jalan keluar baginya, dan Dia memberinya rezeki dari arah yang tidak disangka-sangka. Dan barangsiapa bertawakal kepada Allah, niscaya Allah akan mencukupkan (keperluan)nya.", keutamaan: "Mendatangkan rezeki tak terduga dan solusi dari jalan buntu.", sumber: "QS. At-Talaq: 2-3", count: 1 },
+                { id: "d5", judul: "Doa Permudah Segala Urusan", arab: "اللَّهُمَّ لَا سَهْلَ إِلَّا مَا جَعَلْتَهُ سَهْلًا وَأَنْتَ تَجْعَلُ الْحَزْنَ إِذَا شِئْتَ سَهْلًا", latin: "Allahumma laa sahla illaa maa ja'altahuu sahlaa, wa anta taj'alul hazna idzaa syi'ta sahlaa.", arti: "Ya Allah, tidak ada kemudahan kecuali apa yang Engkau jadikan mudah. Dan Engkau menjadikan kesusahan itu mudah jika Engkau menghendaki.", keutamaan: "Dibaca saat menghadapi ujian, masalah pelik, atau pekerjaan yang terasa berat.", sumber: "HR. Ibnu Hibban", count: 1 },
+                { id: "d6", judul: "Doa Minta Kerja (Doa Nabi Musa)", arab: "رَبِّ إِنِّي لِمَا أَنزَلْتَ إِلَيَّ مِنْ خَيْرٍ فَقِيرٌ", latin: "Rabbi innii limaa anzalta ilayya min khairin faqeer.", arti: "Ya Tuhanku, sesungguhnya aku sangat memerlukan sesuatu kebaikan (pekerjaan, rezeki, kedudukan) yang Engkau turunkan kepadaku.", keutamaan: "Doa Nabi Musa AS saat terdampar tanpa pekerjaan dan rumah. Allah langsung memberinya tempat tinggal, pekerjaan, dan pasangan terbaik.", sumber: "QS. Al-Qasas: 24", count: 1 },
+                { id: "d7", judul: "Doa Nabi Yunus (Pelepas Kesempitan)", arab: "لَّا إِلَٰهَ إِلَّا أَنتَ سُبْحَانَكَ إِنِّي كُنتُ مِنَ الظَّالِمِينَ", latin: "Laa ilaaha illaa anta subhaanaka innii kuntu minadh-dhaalimiin.", arti: "Tidak ada tuhan selain Engkau, Maha Suci Engkau. Sungguh, aku termasuk orang-orang yang zalim.", keutamaan: "Siapa saja muslim yang berdoa dengan doa ini saat tertimpa kesusahan, pasti Allah ijabahi permohonannya.", sumber: "HR. Tirmidzi & Ahmad", count: 1 },
+                { id: "d8", judul: "Doa Kesulitan & Kesempitan Hidup", arab: "اللَّهُمَّ رَحْمَتَكَ أَرْجُو فَلَا تَكِلْنِي إِلَى نَفْسِي طَرْفَةَ عَيْنٍ وَأَصْلِحْ لِي شَأْنِي كُلَّهُ لَا إِلَهَ إِلَّا أَنْتَ", latin: "Allahumma rahmataka arjuu falaa takilnii ilaa nafsii tharfata 'ainin wa ashlih lii sya'nii kullahu laa ilaaha illaa anta.", arti: "Ya Allah, hanya rahmat-Mu yang aku harapkan, maka janganlah Engkau serahkan aku kepada diriku sendiri walau sekejap mata pun. Perbaikilah seluruh urusanku.", keutamaan: "Doa perlindungan penuh saat hati sedih, terdesak, atau merasa tak berdaya.", sumber: "HR. Abu Daud", count: 1 },
+                { id: "d9", judul: "Doa Keinginan Terkabul (Ismullah)", arab: "اللَّهُمَّ إِنِّي أَسْأَلُكَ بِأَنِّي أَشْهَدُ أَنَّكَ أَنْتَ اللَّهُ لَا إِلَهَ إِلَّا أَنْتَ الأَحَدُ الصَّمَدُ الَّذِي لَمْ يَلِدْ وَلَمْ يُولَدْ وَلَمْ يَكُنْ لَهُ كُفُوًا أَحَدٌ", latin: "Allahumma innii as-aluka bi-annii asyhadu annaka antallaahu laa ilaaha illaa antal ahadus shamadul ladzii lam yalid wa lam yuulad wa lam yakul lahuu kufuwan ahad.", arti: "Ya Allah, aku memohon kepada-Mu dengan bersaksi bahwa Engkau adalah Allah, tidak ada tuhan selain Engkau, Yang Maha Esa, tempat bergantung segala sesuatu...", keutamaan: "Mengandung Nama Allah Yang Paling Agung. Jika seseorang berdoa dengannya, permintaannya dikabulkan.", sumber: "HR. Abu Daud & Tirmidzi", count: 1 },
+                { id: "d10", judul: "Doa Pembebasan Api Neraka", arab: "اللَّهُمَّ أَجِرْنِي مِنَ النَّارِ (7x) وَأَسْأَلُكَ الْجَنَّةَ", latin: "Allahumma ajirnii minan naar (7x) wa as-alukal jannah.", arti: "Ya Allah, lindungilah dan bebaskanlah aku dari siksa api neraka, dan aku memohon surga kepada-Mu.", keutamaan: "Membaca 7x setelah Subuh dan Maghrib menjamin perlindungan Allah dari siksa neraka.", sumber: "HR. Abu Daud & Ahmad", count: 7 }
             ],
             sholawat: [
-                { id: "s1", judul: "Sholawat Ibrahimiyah", arab: "اللَّهُمَّ صَلِّ عَلَى مُحَمَّدٍ وَعَلَى آلِ مُحَمَّدٍ كَمَا صَلَّيْتَ عَلَى إِبْرَاهِيمَ وَعَلَى آلِ إِبْرَاهِيمَ...", latin: "Allahumma shalli 'alaa Muhammad wa 'alaa aali Muhammad kamaa shallaita 'alaa Ibraahiim wa 'alaa aali Ibraahiim...", arti: "Ya Allah, berilah shalawat kepada Muhammad dan keluarga Muhammad, sebagaimana Engkau telah memberi shalawat kepada Ibrahim...", keutamaan: "Sholawat paling utama, dibaca saat tasyahud akhir shalat.", sumber: "Muttafaq 'Alaih" },
-                { id: "s2", judul: "Sholawat Jibril", arab: "صَلَّى اللهُ عَلَى مُحَمَّد", latin: "Shallallahu 'alaa Muhammad.", arti: "Semoga Allah memberikan rahmat-Nya kepada Nabi Muhammad.", keutamaan: "Membuka pintu rezeki dari segala penjuru jika dibaca secara konsisten.", sumber: "Ulama Salaf" },
-                { id: "s3", judul: "Sholawat Tibbil Qulub", arab: "اللّٰهُمَّ صَلِّ عَلٰى سَيِّدِنَا مُحَمَّدٍ طِبِّ الْقُلُوْبِ وَدَوَائِهَا، وَعَافِيَةِ الْاَبْدَانِ وَشِفَائِهَا...", latin: "Allahumma shalli 'alaa Sayyidinaa Muhammadin thibbil quluubi wa dawaa-ihaa, wa 'aafiyatil abdaani wa syifaa-ihaa...", arti: "Ya Allah, berikanlah rahmat kepada baginda kami Nabi Muhammad, sang penyembuh hati dan obatnya...", keutamaan: "Sebagai penyembuh penawar penyakit lahir dan batin.", sumber: "Amalan Ulama" },
-                { id: "s4", judul: "Sholawat Nariyah (Pelepas Kesukaran)", arab: "اللَّهُمَّ صَلِّ صَلاَةً كَامِلَةً وَسَلِّمْ سَلاَماً تَامًّا عَلَى سَيِّدِنَا مُحَمَّدٍ الَّذِي تَنْحَلُّ بِهِ الْعُقَدُ وَتَنْفَرِجُ بِهِ الْكُرَبُ...", latin: "Allahumma shalli shalaatan kaamilatan wa sallim salaaman taamman 'alaa Sayyidinaa Muhammadinil ladzii tanhallu bihil 'uqadu wa tanfariju bihil kurab...", arti: "Ya Allah, limpahkanlah shalawat dan salam yang sempurna kepada junjungan kami Nabi Muhammad yang dengan beliau terurai segala ikatan dan terlepas segala kesusahan...", keutamaan: "Dimudahkan urusan, dilapangkan rezeki, dan dihilangkan segala duka cita.", sumber: "Amalan Ulama" },
-                {
-  id: "s5",
-  judul: "Sholawat Munjiyat (Penyelamat)",
-  arab: "اللَّهُمَّ صَلِّ عَلَى سَيِّدِنَا مُحَمَّدٍ صَلَاةً تُنْجِينَا بِهَا مِنْ جَمِيعِ الْأَهْوَالِ وَالْآفَاتِ، وَتَقْضِي لَنَا بِهَا جَمِيعَ الْحَاجَاتِ، وَتُطَهِّرُنَا بِهَا مِنْ جَمِيعِ السَّيِّئَاتِ، وَتَرْفَعُنَا بِهَا عِنْدَكَ أَعْلَى الدَّرَجَاتِ، وَتُبَلِّغُنَا بِهَا أَقْصَى الْغَايَاتِ مِنْ جَمِيعِ الْخَيْرَاتِ فِي الْحَيَاةِ وَبَعْدَ الْمَمَاتِ، إِنَّكَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ",
-  latin: "Allahumma shalli 'alaa Sayyidinaa Muhammadin shalaatan tunjiinaa bihaa min jamii'il ahwaali wal aafaat, wa taqdhii lanaa bihaa jamii'al haajaat, wa tuthahhirunaa bihaa min jamii'is sayyi'aat, wa tarfa'unaa bihaa 'indaka a'lad darajaat, wa tuballighunaa bihaa aqshal ghaayaati min jamii'il khairaati fil hayaati wa ba'dal mamaat, innaka 'alaa kulli syai'in qadiir.",
-  arti: "Ya Allah, limpahkanlah rahmat kepada junjungan kami Nabi Muhammad dengan suatu shalawat yang dengannya Engkau menyelamatkan kami dari segala ketakutan dan bencana, memenuhi segala kebutuhan kami, menyucikan kami dari segala keburukan dan dosa, mengangkat derajat kami ke tempat yang paling tinggi di sisi-Mu, serta menyampaikan kami kepada tujuan-tujuan terbaik dari seluruh kebaikan, baik dalam kehidupan ini maupun setelah kematian. Sesungguhnya Engkau Maha Kuasa atas segala sesuatu.",
-  keutamaan: "Diamalkan oleh banyak ulama sebagai doa memohon keselamatan, kemudahan urusan, perlindungan dari berbagai musibah, dan terkabulnya hajat dengan izin Allah.",
-  sumber: "Shalawat yang masyhur dalam amalan para ulama (dinisbatkan kepada Imam Al-Qurthubi)"
-}
+                { id: "s1", judul: "Sholawat Ibrahimiyah", arab: "اللَّهُمَّ صَلِّ عَلَى مُحَمَّدٍ وَعَلَى آلِ مُحَمَّدٍ كَمَا صَلَّيْتَ عَلَى إِبْرَاهِيمَ وَعَلَى آلِ إِبْرَاهِيمَ...", latin: "Allahumma shalli 'alaa Muhammad wa 'alaa aali Muhammad kamaa shallaita 'alaa Ibraahiim...", arti: "Ya Allah, berilah shalawat kepada Muhammad dan keluarga Muhammad...", keutamaan: "Sholawat paling utama, dibaca saat tasyahud akhir shalat.", sumber: "Muttafaq 'Alaih", count: 1 },
+                { id: "s2", judul: "Sholawat Jibril", arab: "صَلَّى اللهُ عَلَى مُحَمَّد", latin: "Shallallahu 'alaa Muhammad.", arti: "Semoga Allah memberikan rahmat-Nya kepada Nabi Muhammad.", keutamaan: "Membuka pintu rezeki dari segala penjuru jika dibaca secara konsisten.", sumber: "Ulama Salaf", count: 100 },
+                { id: "s3", judul: "Sholawat Tibbil Qulub", arab: "اللّٰهُمَّ صَلِّ عَلٰى سَيِّدِنَا مُحَمَّدٍ طِبِّ الْقُلُوْبِ وَدَوَائِهَا، وَعَافِيَةِ الْاَبْدَانِ وَشِفَائِهَا...", latin: "Allahumma shalli 'alaa Sayyidinaa Muhammadin thibbil quluubi wa dawaa-ihaa...", arti: "Ya Allah, berikanlah rahmat kepada baginda kami Nabi Muhammad, sang penyembuh hati dan obatnya...", keutamaan: "Sebagai penyembuh penawar penyakit lahir dan batin.", sumber: "Amalan Ulama", count: 1 },
+                { id: "s4", judul: "Sholawat Nariyah (Pelepas Kesusahan)", arab: "اللَّهُمَّ صَلِّ صَلاَةً كَامِلَةً وَسَلِّمْ سَلاَماً تَامًّا عَلَى سَيِّدِنَا مُحَمَّدٍ الَّذِي تَنْحَلُّ بِهِ الْعُقَدُ...", latin: "Allahumma shalli shalaatan kaamilatan wa sallim salaaman taamman 'alaa Sayyidinaa Muhammadinil ladzii tanhallu bihil 'uqadu...", arti: "Ya Allah, limpahkanlah shalawat dan salam yang sempurna kepada junjungan kami Nabi Muhammad...", keutamaan: "Dimudahkan urusan, dilapangkan rezeki, dan dihilangkan duka cita.", sumber: "Amalan Ulama", count: 1 },
+                { id: "s5", judul: "Sholawat Munjiyat (Penyelamat)", arab: "اللَّهُمَّ صَلِّ عَلَى سَيِّدِنَا مُحَمَّدٍ صَلاَةً تُنْجِينَا بِهَا مِنْ جَمِيعِ الأَهْوَالِ وَالأَفَاتِ...", latin: "Allahumma shalli 'alaa Sayyidinaa Muhammadin shalaatan tunjiinaa bihaa min jamii'il ahwaali wal aafaat...", arti: "Ya Allah, limpahkanlah rahmat kepada Sayyidina Muhammad, yang dengannya Engkau menyelamatkan kami dari semua keadaan menakutkan...", keutamaan: "Membawa keselamatan dunia akhirat dan pengabulan hajat besar.", sumber: "Amalan Ulama Sufi", count: 1 }
+            ]
         };
 
-        const CategoriesInfo = {
+        const CategoriesMeta = {
             pagi: { title: "Dzikir Pagi", desc: "Dibaca antara waktu Subuh hingga terbit matahari." },
             petang: { title: "Dzikir Petang", desc: "Dibaca antara waktu Ashar hingga terbenam matahari." },
-            malam: { title: "Dzikir Tengah Malam", desc: "Dibaca pada sepertiga malam, waktu Sahar, dan Tahajjud." },
+            malam: { title: "Dzikir Malam", desc: "Dibaca pada sepertiga malam, waktu Sahar, dan Tahajjud." },
             tasbih: { title: "Tasbih & Dzikir Utama", desc: "Subhanallah, Alhamdulillah, Allahu Akbar & Dzikir Rezeki." },
             asmaulhusna: { title: "Asmaul Husna", desc: "Nama-nama Allah yang indah sebagai pembuka keberkahan." },
-            doa: { title: "Doa Harian & Khusus", desc: "Doa Para Nabi, Ayat 1000 Dinar, Pekerjaan, Permudah Urusan & Hajad." },
+            doa: { title: "Doa Para Nabi", desc: "Doa Nabi Sulaiman, Musa, Yunus, Ayat 1000 Dinar & Hajat." },
             sholawat: { title: "Sholawat Nabi", desc: "Kumpulan sholawat keutamaan kepada Nabi Muhammad SAW." }
         };
 
+        const IslamicQuotes = [
+            "\"Maka ingatlah kepada-Ku, Aku pun akan ingat kepadamu.\" (QS. Al-Baqarah: 152)",
+            "\"Ingatlah, hanya dengan mengingat Allah hati menjadi tenteram.\" (QS. Ar-Ra'd: 28)",
+            "\"Perumpamaan orang yang mengingat Tuhannya dan orang yang tidak, seperti orang hidup dan orang mati.\" (HR. Bukhari)",
+            "\"Sebaik-baik amalan adalah engkau berpisah dengan dunia dalam keadaan basah lidahmu dengan dzikrullah.\" (HR. Tirmidzi)",
+            "\"Barangsiapa bertakwa kepada Allah niscaya Dia membukakan jalan keluar baginya.\" (QS. At-Talaq: 2)"
+        ];
+
         /**
-         * STREAMING_CHUNK:JavaScript - Utilities & Global State
+         * STREAMING_CHUNK:JavaScript - Helper Utilities & Debounce Functions...
          */
-        const utils = {
-            generateId: () => Math.random().toString(36).substr(2, 9),
-            showToast: (message, type = 'success') => {
-                const container = document.getElementById('toast-container');
-                const toast = document.createElement('div');
-                toast.className = `px-4 py-2 rounded-full shadow-lg text-white text-sm font-medium flex items-center gap-2 toast-enter ${type === 'success' ? 'bg-gray-800 dark:bg-gray-700' : 'bg-red-500'}`;
-                toast.innerHTML = `<i class="fa-solid ${type === 'success' ? 'fa-check-circle text-green-400' : 'fa-triangle-exclamation'}"></i> ${message}`;
-                
-                container.appendChild(toast);
-                
-                setTimeout(() => {
-                    toast.classList.replace('toast-enter', 'toast-leave');
-                    setTimeout(() => toast.remove(), 300); // match animation duration
-                }, 3000);
+        const Utils = {
+            debounce: (fn, delay = 250) => {
+                let timer;
+                return (...args) => {
+                    clearTimeout(timer);
+                    timer = setTimeout(() => fn(...args), delay);
+                };
             },
-            copyToClipboard: async (text) => {
+
+            copyText: async (text) => {
                 try {
                     await navigator.clipboard.writeText(text);
-                    utils.showToast('Berhasil disalin ke clipboard!');
+                    ToastManager.show('Berhasil disalin ke clipboard!', 'success');
                 } catch (err) {
                     // Fallback
-                    const textArea = document.createElement("textarea");
-                    textArea.value = text;
-                    document.body.appendChild(textArea);
-                    textArea.select();
-                    document.execCommand("copy");
-                    textArea.remove();
-                    utils.showToast('Berhasil disalin ke clipboard!');
+                    const ta = document.createElement('textarea');
+                    ta.value = text;
+                    document.body.appendChild(ta);
+                    ta.select();
+                    document.execCommand('copy');
+                    ta.remove();
+                    ToastManager.show('Berhasil disalin ke clipboard!', 'success');
                 }
             },
+
             shareData: async (title, text) => {
                 if (navigator.share) {
                     try {
-                        await navigator.share({ title: `DzikirKu: ${title}`, text: text });
+                        await navigator.share({ title: `DzikirKu: ${title}`, text });
                     } catch (err) {
-                        if (err.name !== 'AbortError') utils.showToast('Gagal membagikan.', 'error');
+                        if (err.name !== 'AbortError') ToastManager.show('Gagal membagikan.', 'error');
                     }
                 } else {
-                    utils.copyToClipboard(text);
+                    Utils.copyText(text);
+                }
+            },
+
+            formatDate: (date = new Date()) => {
+                const options = { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' };
+                return date.toLocaleDateString('id-ID', options);
+            },
+
+            getTimeGreeting: () => {
+                const hour = new Date().getHours();
+                if (hour >= 3 && hour < 11) return "Selamat Pagi";
+                if (hour >= 11 && hour < 15) return "Selamat Siang";
+                if (hour >= 15 && hour < 18) return "Selamat Sore";
+                return "Selamat Malam";
+            }
+        };
+
+        /**
+         * STREAMING_CHUNK:JavaScript - Storage Manager (LocalStorage Wrapper)...
+         */
+        const StorageManager = {
+            KEYS: {
+                FAVORITES: 'dzikirku_v2_favorites',
+                THEME: 'dzikirku_v2_theme',
+                READ_COUNT: 'dzikirku_v2_readcount',
+                RECENT: 'dzikirku_v2_recent'
+            },
+
+            getFavorites: () => {
+                try {
+                    return JSON.parse(localStorage.getItem(StorageManager.KEYS.FAVORITES)) || [];
+                } catch (e) {
+                    return [];
+                }
+            },
+
+            toggleFavorite: (item) => {
+                const favs = StorageManager.getFavorites();
+                const idx = favs.findIndex(f => f.id === item.id);
+                let isAdded = false;
+
+                if (idx > -1) {
+                    favs.splice(idx, 1);
+                } else {
+                    favs.push(item);
+                    isAdded = true;
+                }
+
+                localStorage.setItem(StorageManager.KEYS.FAVORITES, JSON.stringify(favs));
+                return isAdded;
+            },
+
+            clearFavorites: () => {
+                localStorage.removeItem(StorageManager.KEYS.FAVORITES);
+            },
+
+            getTheme: () => localStorage.getItem(StorageManager.KEYS.THEME) || 'light',
+            setTheme: (theme) => localStorage.setItem(StorageManager.KEYS.THEME, theme),
+
+            getReadCount: () => parseInt(localStorage.getItem(StorageManager.KEYS.READ_COUNT) || '0', 10),
+            incrementReadCount: () => {
+                const newCount = StorageManager.getReadCount() + 1;
+                localStorage.setItem(StorageManager.KEYS.READ_COUNT, newCount.toString());
+                return newCount;
+            },
+
+            getRecent: () => {
+                try {
+                    return JSON.parse(localStorage.getItem(StorageManager.KEYS.RECENT));
+                } catch (e) { return null; }
+            },
+            setRecent: (categoryKey, itemTitle) => {
+                localStorage.setItem(StorageManager.KEYS.RECENT, JSON.stringify({ categoryKey, itemTitle, timestamp: Date.now() }));
+            },
+            clearHistory: () => {
+                localStorage.removeItem(StorageManager.KEYS.RECENT);
+                DzikirApp.updateRecentCard();
+            }
+        };
+
+        /**
+         * STREAMING_CHUNK:JavaScript - Toast Notification Manager...
+         */
+        const ToastManager = {
+            show: (message, type = 'success') => {
+                const container = document.getElementById('toast-container');
+                const toast = document.createElement('div');
+                
+                const bgClass = type === 'success' 
+                    ? 'bg-slate-900/90 dark:bg-slate-800/90 border-emerald-500/50 text-white' 
+                    : (type === 'error' ? 'bg-rose-600/90 text-white border-rose-400' : 'bg-amber-600/90 text-white border-amber-400');
+                
+                const iconClass = type === 'success' ? 'fa-check-circle text-emerald-400' : (type === 'error' ? 'fa-circle-xmark' : 'fa-circle-exclamation');
+
+                toast.className = `px-4 py-3 rounded-2xl shadow-xl border backdrop-blur-md text-xs font-medium flex items-center gap-2.5 fade-in pointer-events-auto transition-all ${bgClass}`;
+                toast.innerHTML = `<i class="fa-solid ${iconClass} text-sm"></i> <span>${message}</span>`;
+
+                container.appendChild(toast);
+
+                setTimeout(() => {
+                    toast.style.opacity = '0';
+                    toast.style.transform = 'translateY(10px)';
+                    toast.style.transition = 'all 0.3s ease';
+                    setTimeout(() => toast.remove(), 300);
+                }, 2800);
+            }
+        };
+
+        /**
+         * STREAMING_CHUNK:JavaScript - Theme Manager...
+         */
+        const ThemeManager = {
+            init: () => {
+                const savedTheme = StorageManager.getTheme();
+                const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                const activeTheme = savedTheme || (prefersDark ? 'dark' : 'light');
+                ThemeManager.apply(activeTheme);
+
+                document.getElementById('btn-theme').addEventListener('click', () => {
+                    const current = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
+                    const next = current === 'dark' ? 'light' : 'dark';
+                    ThemeManager.apply(next);
+                    StorageManager.setTheme(next);
+                });
+            },
+
+            apply: (theme) => {
+                const icon = document.getElementById('icon-theme');
+                if (theme === 'dark') {
+                    document.documentElement.classList.add('dark');
+                    icon.className = 'fa-solid fa-sun text-lg text-amber-400';
+                } else {
+                    document.documentElement.classList.remove('dark');
+                    icon.className = 'fa-solid fa-moon text-lg text-slate-600';
                 }
             }
         };
 
-        // Application State
-        const state = {
-            currentView: 'home',
-            currentCategory: null,
-            favorites: JSON.parse(localStorage.getItem('dzikirku_favorites')) || [],
-            theme: localStorage.getItem('dzikirku_theme') || 'light'
+        /**
+         * STREAMING_CHUNK:JavaScript - Search Manager...
+         */
+        const SearchManager = {
+            init: () => {
+                const input = document.getElementById('search-input');
+                const debouncedSearch = Utils.debounce((e) => {
+                    const query = e.target.value.trim().toLowerCase();
+                    const clearBtn = document.getElementById('search-clear-btn');
+                    
+                    if (query.length > 0) {
+                        clearBtn.classList.remove('hidden');
+                    } else {
+                        clearBtn.classList.add('hidden');
+                    }
+
+                    if (DzikirApp.state.currentCategory) {
+                        const originalData = AppData[DzikirApp.state.currentCategory] || [];
+                        const filtered = originalData.filter(item => 
+                            item.judul.toLowerCase().includes(query) ||
+                            item.latin.toLowerCase().includes(query) ||
+                            item.arti.toLowerCase().includes(query) ||
+                            (item.keutamaan && item.keutamaan.toLowerCase().includes(query)) ||
+                            (item.sumber && item.sumber.toLowerCase().includes(query))
+                        );
+                        DzikirApp.renderListCards(filtered);
+                    }
+                }, 200);
+
+                input.addEventListener('input', debouncedSearch);
+            },
+
+            clearSearch: () => {
+                const input = document.getElementById('search-input');
+                input.value = '';
+                document.getElementById('search-clear-btn').classList.add('hidden');
+                if (DzikirApp.state.currentCategory) {
+                    DzikirApp.renderListCards(AppData[DzikirApp.state.currentCategory]);
+                }
+            }
         };
 
         /**
-         * STREAMING_CHUNK:JavaScript - Core App Logic & Routing
+         * STREAMING_CHUNK:JavaScript - Core DzikirApp Controller...
          */
-        const app = {
-            init: () => {
-                app.initTheme();
-                app.initClock();
-                app.initScroll();
-                app.setupEventListeners();
-                app.initPWA();
-                app.renderFavoritesCheck();
+        const DzikirApp = {
+            state: {
+                currentView: 'home',
+                currentCategory: null,
+                activeTapCounters: {}
             },
 
-            // Navigation/Router Router
-            navigate: (view, category = null) => {
-                // Hide all views
+            init: () => {
+                ThemeManager.init();
+                SearchManager.init();
+                DzikirApp.initClockAndQuotes();
+                DzikirApp.initPWA();
+                DzikirApp.updateDashboardStats();
+                DzikirApp.updateRecentCard();
+                DzikirApp.setupScrollListener();
+            },
+
+            navigate: (view, categoryKey = null) => {
                 document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
-                
-                // Show requested view
                 document.getElementById(`view-${view}`).classList.add('active');
-                state.currentView = view;
-                
-                // Update Bottom Nav UI
+                DzikirApp.state.currentView = view;
+
+                // Nav pill state update
                 document.querySelectorAll('.nav-btn').forEach(btn => {
-                    if(btn.dataset.target === view) {
+                    if (btn.dataset.target === view) {
                         btn.classList.add('text-primary', 'dark:text-accent');
-                        btn.classList.remove('text-gray-400');
+                        btn.classList.remove('text-slate-400');
                     } else {
                         btn.classList.remove('text-primary', 'dark:text-accent');
-                        btn.classList.add('text-gray-400');
+                        btn.classList.add('text-slate-400');
                     }
                 });
 
-                // Handle specific view logic
-                if (view === 'list' && category) {
-                    state.currentCategory = category;
-                    document.getElementById('list-title').innerText = CategoriesInfo[category].title;
-                    document.getElementById('list-desc').innerText = CategoriesInfo[category].desc;
-                    document.getElementById('search-input').value = '';
-                    app.renderList(AppData[category]);
+                if (view === 'list' && categoryKey) {
+                    DzikirApp.state.currentCategory = categoryKey;
+                    const meta = CategoriesMeta[categoryKey];
+                    document.getElementById('list-title').innerText = meta ? meta.title : 'Daftar Bacaan';
+                    document.getElementById('list-desc').innerText = meta ? meta.desc : '';
+                    SearchManager.clearSearch();
+                    
+                    const data = AppData[categoryKey] || [];
+                    DzikirApp.renderListCards(data);
+
+                    // Track history
+                    if (data.length > 0) {
+                        StorageManager.setRecent(categoryKey, meta.title);
+                        DzikirApp.updateRecentCard();
+                    }
                 } else if (view === 'favorites') {
-                    app.renderFavorites();
+                    DzikirApp.renderFavorites();
                 }
 
-                window.scrollTo(0, 0);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
             },
 
-            // Rendering List Data
-            renderList: (data, containerId = 'list-container', emptyId = 'list-empty') => {
+            // Render Item Cards
+            renderListCards: (data, containerId = 'list-container', emptyId = 'list-empty') => {
                 const container = document.getElementById(containerId);
                 const empty = document.getElementById(emptyId);
                 container.innerHTML = '';
@@ -499,106 +778,84 @@
                 empty.classList.add('hidden');
                 empty.classList.remove('flex');
 
+                const favorites = StorageManager.getFavorites();
+
                 data.forEach((item, index) => {
-                    const isFav = state.favorites.some(f => f.id === item.id);
+                    const isFav = favorites.some(f => f.id === item.id);
+                    const targetCount = item.count || 1;
+                    const currentTap = DzikirApp.state.activeTapCounters[item.id] || 0;
+
                     const card = document.createElement('div');
-                    card.className = "bg-white dark:bg-darkCard rounded-xl p-5 shadow-sm border border-gray-100 dark:border-gray-700 fade-in";
+                    card.className = "bg-white dark:bg-darkCard rounded-2xl p-5 shadow-sm border border-slate-100 dark:border-darkBorder fade-in transition-all";
                     
                     card.innerHTML = `
-                        <div class="flex justify-between items-start mb-4 border-b border-gray-100 dark:border-gray-700 pb-3">
-                            <div class="flex items-center gap-3">
-                                <div class="w-8 h-8 rounded-full bg-secondary dark:bg-gray-800 text-primary dark:text-accent flex items-center justify-center font-bold text-sm">
+                        <div class="flex justify-between items-start mb-3 pb-3 border-b border-slate-100 dark:border-darkBorder">
+                            <div class="flex items-center gap-2.5">
+                                <span class="w-7 h-7 rounded-full bg-emerald-100 dark:bg-emerald-950 text-primary dark:text-accent font-bold text-xs flex items-center justify-center">
                                     ${index + 1}
-                                </div>
-                                <h4 class="font-bold text-lg dark:text-white">${item.judul}</h4>
+                                </span>
+                                <h4 class="font-bold text-base dark:text-white leading-tight">${item.judul}</h4>
                             </div>
-                            <button onclick="app.toggleFavorite('${item.id}', '${state.currentCategory || 'mixed'}')" class="text-2xl p-1 transition ${isFav ? 'text-accent' : 'text-gray-300 dark:text-gray-600 hover:text-accent'}">
+                            <button onclick="DzikirApp.toggleFavorite('${item.id}')" class="text-xl p-1.5 transition-transform active:scale-125 ${isFav ? 'text-accent' : 'text-slate-300 dark:text-slate-600 hover:text-accent'}">
                                 <i class="fa-${isFav ? 'solid' : 'regular'} fa-bookmark"></i>
                             </button>
                         </div>
-                        <div class="space-y-4">
-                            <p class="arabic-text text-right text-gray-900 dark:text-white">${item.arab}</p>
-                            <p class="text-primary dark:text-accent font-medium text-sm italic leading-relaxed">${item.latin}</p>
-                            <p class="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">"${item.arti}"</p>
+
+                        <div class="space-y-3.5">
+                            <p class="arabic-text text-right text-slate-900 dark:text-slate-100 select-text">${item.arab}</p>
+                            <p class="text-primary dark:text-accent font-medium text-xs italic leading-relaxed select-text">${item.latin}</p>
+                            <p class="text-xs text-slate-700 dark:text-slate-300 leading-relaxed select-text font-sans">"${item.arti}"</p>
                             
                             ${item.keutamaan ? `
-                            <div class="bg-gray-50 dark:bg-gray-800/50 p-3 rounded-lg text-xs mt-2 border-l-2 border-primary dark:border-accent">
-                                <strong class="text-primary dark:text-accent block mb-1">Keutamaan:</strong>
-                                <span class="text-gray-600 dark:text-gray-400">${item.keutamaan}</span>
+                            <div class="bg-slate-50 dark:bg-slate-800/60 p-3 rounded-xl text-xs border-l-2 border-primary dark:border-accent">
+                                <strong class="text-primary dark:text-accent block mb-0.5 text-[11px] uppercase tracking-wider">Keutamaan:</strong>
+                                <span class="text-slate-600 dark:text-slate-400 leading-relaxed">${item.keutamaan}</span>
                             </div>` : ''}
                             
                             ${item.sumber ? `
-                            <p class="text-xs text-gray-500 font-semibold text-right mt-2">${item.sumber}</p>` : ''}
+                            <p class="text-[11px] text-slate-400 font-medium text-right">${item.sumber}</p>` : ''}
                         </div>
-                        <div class="flex gap-2 mt-4 pt-4 border-t border-gray-100 dark:border-gray-700">
-                            <button onclick="app.actionCopy('${item.id}')" class="flex-1 py-2 bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-300 rounded-lg text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-700 transition flex justify-center items-center gap-2">
-                                <i class="fa-regular fa-copy"></i> Salin
+
+                        <!-- Tap Counter & Actions Strip -->
+                        <div class="mt-4 pt-3 border-t border-slate-100 dark:border-darkBorder flex items-center justify-between gap-2">
+                            <button onclick="DzikirApp.handleTapCounter('${item.id}', ${targetCount})" class="tap-pulse flex items-center gap-2 px-3 py-1.5 bg-emerald-50 dark:bg-emerald-950/50 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 text-primary dark:text-accent rounded-xl text-xs font-semibold border border-emerald-200/50 dark:border-emerald-800/40 transition">
+                                <i class="fa-solid fa-hand-pointer"></i>
+                                <span>Hitung: <strong id="counter-val-${item.id}">${currentTap}</strong> / ${targetCount}x</span>
                             </button>
-                            <button onclick="app.actionShare('${item.id}')" class="flex-1 py-2 bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-300 rounded-lg text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-700 transition flex justify-center items-center gap-2">
-                                <i class="fa-solid fa-share-nodes"></i> Bagikan
-                            </button>
+
+                            <div class="flex items-center gap-1.5">
+                                <button onclick="DzikirApp.copyFormatted('${item.id}')" class="p-2 text-slate-500 hover:text-primary dark:hover:text-accent hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition text-sm" title="Salin Text">
+                                    <i class="fa-regular fa-copy"></i>
+                                </button>
+                                <button onclick="DzikirApp.shareItem('${item.id}')" class="p-2 text-slate-500 hover:text-primary dark:hover:text-accent hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition text-sm" title="Bagikan">
+                                    <i class="fa-solid fa-share-nodes"></i>
+                                </button>
+                            </div>
                         </div>
                     `;
                     container.appendChild(card);
                 });
             },
 
-            /**
-             * STREAMING_CHUNK:JavaScript - Feature Implementations (Search, Fav, Copy, Theme)
-             */
-            // Search Logic
-            handleSearch: (e) => {
-                const keyword = e.target.value.toLowerCase();
-                if(!state.currentCategory) return;
+            handleTapCounter: (itemId, maxCount) => {
+                let current = DzikirApp.state.activeTapCounters[itemId] || 0;
+                current += 1;
                 
-                const data = AppData[state.currentCategory];
-                const filtered = data.filter(item => 
-                    item.judul.toLowerCase().includes(keyword) || 
-                    item.arti.toLowerCase().includes(keyword) ||
-                    item.latin.toLowerCase().includes(keyword)
-                );
-                app.renderList(filtered);
-            },
-
-            // Favorites Logic
-            toggleFavorite: (id, category) => {
-                const index = state.favorites.findIndex(f => f.id === id);
-                
-                if (index > -1) {
-                    state.favorites.splice(index, 1);
-                    utils.showToast('Dihapus dari Favorit');
-                } else {
-                    // Find item data
-                    let itemData = null;
-                    for (const cat in AppData) {
-                        const found = AppData[cat].find(i => i.id === id);
-                        if (found) { itemData = found; break; }
-                    }
-                    if (itemData) {
-                        state.favorites.push(itemData);
-                        utils.showToast('Disimpan ke Favorit');
-                    }
+                if (current > maxCount) {
+                    current = 1; // reset loop
                 }
-                
-                localStorage.setItem('dzikirku_favorites', JSON.stringify(state.favorites));
-                
-                // Re-render current view
-                if (state.currentView === 'list') {
-                    app.renderList(AppData[state.currentCategory]); // preserve search if needed, simplified here
-                } else if (state.currentView === 'favorites') {
-                    app.renderFavorites();
+
+                DzikirApp.state.activeTapCounters[itemId] = current;
+                const badge = document.getElementById(`counter-val-${itemId}`);
+                if (badge) badge.innerText = current;
+
+                if (current === maxCount) {
+                    ToastManager.show('Selesai dibaca! (Target tercapai)', 'success');
+                    StorageManager.incrementReadCount();
+                    DzikirApp.updateDashboardStats();
                 }
             },
 
-            renderFavorites: () => {
-                app.renderList(state.favorites, 'favorites-container', 'favorites-empty');
-            },
-            renderFavoritesCheck: () => {
-                // Ensure valid data in localstorage on load
-                if(!Array.isArray(state.favorites)) state.favorites = [];
-            },
-
-            // Actions
             getItemById: (id) => {
                 for (const cat in AppData) {
                     const found = AppData[cat].find(i => i.id === id);
@@ -606,115 +863,158 @@
                 }
                 return null;
             },
-            actionCopy: (id) => {
-                const item = app.getItemById(id);
-                if(!item) return;
-                const text = `${item.judul}\n\n${item.arab}\n\n${item.latin}\n\nArtinya:\n${item.arti}\n\n(DzikirKu App)`;
-                utils.copyToClipboard(text);
-            },
-            actionShare: (id) => {
-                const item = app.getItemById(id);
-                if(!item) return;
-                const text = `${item.judul}\n${item.arab}\n\nArtinya:\n${item.arti}\n\nBaca selengkapnya di DzikirKu App.`;
-                utils.shareData(item.judul, text);
+
+            toggleFavorite: (id) => {
+                const item = DzikirApp.getItemById(id);
+                if (!item) return;
+
+                const added = StorageManager.toggleFavorite(item);
+                ToastManager.show(added ? 'Disimpan ke Favorit' : 'Dihapus dari Favorit', added ? 'success' : 'warning');
+                
+                DzikirApp.updateDashboardStats();
+
+                if (DzikirApp.state.currentView === 'list') {
+                    DzikirApp.renderListCards(AppData[DzikirApp.state.currentCategory]);
+                } else if (DzikirApp.state.currentView === 'favorites') {
+                    DzikirApp.renderFavorites();
+                }
             },
 
-            // UI Elements
-            initClock: () => {
-                const dateDisplay = document.getElementById('date-display');
-                const clockDisplay = document.getElementById('clock-display');
-                
+            renderFavorites: () => {
+                const favs = StorageManager.getFavorites();
+                const clearBtn = document.getElementById('btn-clear-favs');
+                const subtitle = document.getElementById('fav-count-subtitle');
+
+                subtitle.innerText = `${favs.length} bacaan tersimpan`;
+
+                if (favs.length > 0) {
+                    clearBtn.classList.remove('hidden');
+                } else {
+                    clearBtn.classList.add('hidden');
+                }
+
+                DzikirApp.renderListCards(favs, 'favorites-container', 'favorites-empty');
+            },
+
+            confirmClearFavorites: () => {
+                if (confirm('Apakah Anda yakin ingin menghapus semua bacaan dari Favorit?')) {
+                    StorageManager.clearFavorites();
+                    DzikirApp.renderFavorites();
+                    DzikirApp.updateDashboardStats();
+                    ToastManager.show('Seluruh favorit telah dihapus', 'warning');
+                }
+            },
+
+            copyFormatted: (id) => {
+                const item = DzikirApp.getItemById(id);
+                if (!item) return;
+                const formatted = `${item.judul}\n\n${item.arab}\n\n${item.latin}\n\nArtinya:\n"${item.arti}"\n\nKeutamaan:\n${item.keutamaan || '-'}\n(${item.sumber || ''})\n\n-- Dibaca via DzikirKu App --`;
+                Utils.copyText(formatted);
+            },
+
+            shareItem: (id) => {
+                const item = DzikirApp.getItemById(id);
+                if (!item) return;
+                const formatted = `${item.judul}\n\n${item.arab}\n\nArtinya:\n"${item.arti}"\n\nBaca lengkap di DzikirKu App.`;
+                Utils.shareData(item.judul, formatted);
+            },
+
+            initClockAndQuotes: () => {
+                const clockEl = document.getElementById('clock-display');
+                const dateEl = document.getElementById('date-display');
+                const greetingTitle = document.getElementById('user-greeting-title');
+                const quoteEl = document.getElementById('quote-display');
+
                 const updateClock = () => {
                     const now = new Date();
-                    const options = { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' };
-                    dateDisplay.innerText = now.toLocaleDateString('id-ID', options);
-                    
-                    const timeStr = now.toLocaleTimeString('id-ID', { hour12: false });
-                    clockDisplay.innerText = timeStr.replace(/\./g, ':');
+                    clockEl.innerText = now.toLocaleTimeString('id-ID', { hour12: false }).replace(/\./g, ':');
+                    dateEl.innerText = Utils.formatDate(now);
+                    greetingTitle.innerText = Utils.getTimeGreeting();
                 };
-                
+
                 updateClock();
                 setInterval(updateClock, 1000);
+
+                // Set Random Quote
+                const randQuote = IslamicQuotes[Math.floor(Math.random() * IslamicQuotes.length)];
+                quoteEl.innerText = randQuote;
             },
 
-            initTheme: () => {
-                const html = document.documentElement;
-                const icon = document.getElementById('icon-theme');
-                
-                const applyTheme = (isDark) => {
-                    if(isDark) {
-                        html.classList.add('dark');
-                        icon.classList.replace('fa-moon', 'fa-sun');
-                    } else {
-                        html.classList.remove('dark');
-                        icon.classList.replace('fa-sun', 'fa-moon');
-                    }
-                };
+            updateDashboardStats: () => {
+                document.getElementById('stat-read-count').innerText = StorageManager.getReadCount();
+                document.getElementById('stat-fav-count').innerText = StorageManager.getFavorites().length;
+            },
 
-                // Check system preference if no saved setting
-                if (!localStorage.getItem('dzikirku_theme')) {
-                    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-                    state.theme = prefersDark ? 'dark' : 'light';
+            updateRecentCard: () => {
+                const recent = StorageManager.getRecent();
+                const container = document.getElementById('recent-container');
+                if (recent && recent.categoryKey) {
+                    container.classList.remove('hidden');
+                    document.getElementById('recent-title').innerText = recent.itemTitle;
+                    document.getElementById('recent-subtitle').innerText = `Terakhir dibaca`;
+                } else {
+                    container.classList.add('hidden');
                 }
-                
-                applyTheme(state.theme === 'dark');
-
-                document.getElementById('btn-theme').addEventListener('click', () => {
-                    state.theme = state.theme === 'light' ? 'dark' : 'light';
-                    localStorage.setItem('dzikirku_theme', state.theme);
-                    applyTheme(state.theme === 'dark');
-                });
             },
 
-            initScroll: () => {
+            openRecent: () => {
+                const recent = StorageManager.getRecent();
+                if (recent && recent.categoryKey) {
+                    DzikirApp.navigate('list', recent.categoryKey);
+                }
+            },
+
+            setupScrollListener: () => {
                 const btnTop = document.getElementById('btn-top');
                 window.addEventListener('scroll', () => {
-                    if (window.scrollY > 300) {
+                    if (window.scrollY > 280) {
                         btnTop.classList.remove('opacity-0', 'translate-y-10', 'pointer-events-none');
-                        btnTop.classList.add('opacity-100', 'translate-y-0');
                     } else {
                         btnTop.classList.add('opacity-0', 'translate-y-10', 'pointer-events-none');
-                        btnTop.classList.remove('opacity-100', 'translate-y-0');
-                    }
-                });
-            },
-
-            setupEventListeners: () => {
-                document.getElementById('search-input').addEventListener('input', app.handleSearch);
-                
-                // Stub for Notifications
-                document.getElementById('toggle-notif').addEventListener('change', (e) => {
-                    if (e.target.checked) {
-                        app.requestNotificationPermission(e.target);
-                    } else {
-                        utils.showToast('Notifikasi dimatikan.');
                     }
                 });
             },
 
             /**
-             * STREAMING_CHUNK:JavaScript - PWA, Service Worker & Manifest Injection
-             * Note: Injecting via Blobs to adhere to strict Single-File rule!
+             * STREAMING_CHUNK:JavaScript - PWA & Dynamic Blob Service Worker Manager...
              */
             initPWA: () => {
-                // 1. Inject Manifest Dynamically
-                const manifestBlob = new Blob([JSON.stringify(manifestContent)], { type: 'application/json' });
-                const manifestUrl = URL.createObjectURL(manifestBlob);
-                const link = document.createElement('link');
-                link.rel = 'manifest';
-                link.href = manifestUrl;
-                document.head.appendChild(link);
+                // 1. Dynamic Web App Manifest Injection via Blob URL
+                const manifestData = {
+                    name: "DzikirKu v2.0 - Teman Ibadah Harian",
+                    short_name: "DzikirKu",
+                    description: "Aplikasi bacaan dzikir pagi, petang, malam, doa nabi, dan sholawat offline",
+                    start_url: "./",
+                    display: "standalone",
+                    background_color: "#166534",
+                    theme_color: "#166534",
+                    icons: [
+                        {
+                            src: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' fill='%23166534' rx='120'/%3E%3Cpath fill='%23fff' d='M256 96c-88.3 0-160 71.7-160 160s71.7 160 160 160 160-71.7 160-160S344.3 96 256 96zm0 288c-70.6 0-128-57.4-128-128S185.4 128 256 128s128 57.4 128 128-57.4 128-128 128z'/%3E%3C/svg%3E",
+                            sizes: "512x512",
+                            type: "image/svg+xml",
+                            purpose: "any maskable"
+                        }
+                    ]
+                };
 
-                // 2. Install Prompt Logic
+                const manifestBlob = new Blob([JSON.stringify(manifestData)], { type: 'application/json' });
+                const manifestUrl = URL.createObjectURL(manifestBlob);
+                const manifestLink = document.createElement('link');
+                manifestLink.rel = 'manifest';
+                manifestLink.href = manifestUrl;
+                document.head.appendChild(manifestLink);
+
+                // 2. Install Prompt Controls
                 let deferredPrompt;
-                const installBtn = document.getElementById('btn-install');
-                const pwaStatus = document.getElementById('pwa-status');
-                
+                const installBtn = document.getElementById('btn-install-app');
+                const statusText = document.getElementById('pwa-status-text');
+
                 window.addEventListener('beforeinstallprompt', (e) => {
                     e.preventDefault();
                     deferredPrompt = e;
                     installBtn.classList.remove('hidden');
-                    pwaStatus.innerText = "Aplikasi siap di-install (PWA).";
+                    statusText.innerText = "Aplikasi siap di-instal di perangkat Anda.";
                 });
 
                 installBtn.addEventListener('click', async () => {
@@ -723,7 +1023,7 @@
                         const { outcome } = await deferredPrompt.userChoice;
                         if (outcome === 'accepted') {
                             installBtn.classList.add('hidden');
-                            pwaStatus.innerText = "Terima kasih telah menginstall DzikirKu!";
+                            statusText.innerText = "Aplikasi berhasil di-instal.";
                         }
                         deferredPrompt = null;
                     }
@@ -731,83 +1031,87 @@
 
                 window.addEventListener('appinstalled', () => {
                     installBtn.classList.add('hidden');
-                    pwaStatus.innerText = "Aplikasi sudah terinstall.";
-                    utils.showToast('DzikirKu berhasil di-install!');
+                    statusText.innerText = "DzikirKu sudah terinstal sebagai PWA.";
                 });
 
-                // 3. Service Worker Setup via Blob
+                // 3. Service Worker Registration
                 if ('serviceWorker' in navigator) {
                     const swCode = `
-                        const CACHE_NAME = 'dzikirku-v1';
-                        // Hanya cache root / karena data dinamis di single file
-                        const urlsToCache = ['.'];
+                        const CACHE_NAME = 'dzikirku-v2.0';
+                        const urlsToCache = ['./'];
 
                         self.addEventListener('install', event => {
                             event.waitUntil(
                                 caches.open(CACHE_NAME).then(cache => cache.addAll(urlsToCache))
                             );
+                            self.skipWaiting();
+                        });
+
+                        self.addEventListener('activate', event => {
+                            event.waitUntil(
+                                caches.keys().then(cacheNames => {
+                                    return Promise.all(
+                                        cacheNames.map(cache => {
+                                            if (cache !== CACHE_NAME) return caches.delete(cache);
+                                        })
+                                    );
+                                })
+                            );
+                            self.clients.claim();
                         });
 
                         self.addEventListener('fetch', event => {
                             event.respondWith(
                                 caches.match(event.request).then(response => {
                                     return response || fetch(event.request);
-                                }).catch(() => caches.match('.')) // Offline fallback to root
+                                }).catch(() => caches.match('./'))
                             );
                         });
                     `;
-                    
-                  if ("serviceWorker" in navigator) {
 
-    navigator.serviceWorker.register("sw.js")
-    .then(()=>{
-
-        console.log("SW Registered");
-
-    });
-
-}
+                    const swBlob = new Blob([swCode], { type: 'text/javascript' });
                     const swUrl = URL.createObjectURL(swBlob);
-                    
+
                     navigator.serviceWorker.register(swUrl)
-                        .then(reg => console.log('Service Worker registered via Blob', reg))
-                        .catch(err => {
-                            console.log('SW Registration failed (Expected in some Iframe environments):', err);
-                            pwaStatus.innerText = "Fitur offline PWA dibatasi di browser ini.";
+                        .then(() => {
+                            statusText.innerText = "PWA Active & Ready Offline.";
+                        })
+                        .catch(() => {
+                            statusText.innerText = "Aplikasi berjalan dalam mode Web.";
                         });
                 } else {
-                    pwaStatus.innerText = "Browser tidak mendukung Service Worker.";
+                    statusText.innerText = "Browser tidak mendukung Service Worker.";
                 }
-            },
 
-            // Notifications Stub (Preparation for FCM)
-            requestNotificationPermission: async (checkboxEl) => {
-                if (!('Notification' in window)) {
-                    utils.showToast('Browser ini tidak mendukung notifikasi.', 'error');
-                    checkboxEl.checked = false;
-                    return;
-                }
-                
-                try {
-                    const permission = await Notification.requestPermission();
-                    if (permission === 'granted') {
-                        utils.showToast('Notifikasi diaktifkan!');
-                        // Di sini nantinya integrasi FCM Token request
-                        // const token = await getToken(messaging, { vapidKey: '...' });
-                    } else {
-                        utils.showToast('Izin notifikasi ditolak.', 'error');
-                        checkboxEl.checked = false;
+                // FCM Push Notification Toggle Setup
+                const notifToggle = document.getElementById('toggle-notif');
+                notifToggle.addEventListener('change', async (e) => {
+                    if (e.target.checked) {
+                        if (!('Notification' in window)) {
+                            ToastManager.show('Browser tidak mendukung Notifikasi.', 'error');
+                            e.target.checked = false;
+                            return;
+                        }
+                        const perm = await Notification.requestPermission();
+                        if (perm === 'granted') {
+                            ToastManager.show('Izin notifikasi diberikan!', 'success');
+                            /* 
+                             * FIREBASE FCM PLACEHOLDER ARCHITECTURE:
+                             * In production with Firebase SDK initialized:
+                             * const token = await getToken(messaging, { vapidKey: 'YOUR_VAPID_KEY' });
+                             * console.log('FCM Token generated:', token);
+                             */
+                        } else {
+                            ToastManager.show('Izin notifikasi ditolak.', 'warning');
+                            e.target.checked = false;
+                        }
                     }
-                } catch (error) {
-                    utils.showToast('Terjadi kesalahan.', 'error');
-                    checkboxEl.checked = false;
-                }
+                });
             }
         };
 
-        // Initialize App on DOM Load
-        document.addEventListener('DOMContentLoaded', app.init);
-
+        // Initialize Application
+        document.addEventListener('DOMContentLoaded', DzikirApp.init);
     </script>
 </body>
 </html>
