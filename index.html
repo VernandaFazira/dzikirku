@@ -678,12 +678,6 @@
              */
             initPWA: () => {
                 // 1. Inject Manifest Dynamically
-                const manifestBlob = new Blob([JSON.stringify(manifestContent)], { type: 'application/json' });
-                const manifestUrl = URL.createObjectURL(manifestBlob);
-                const link = document.createElement('link');
-                link.rel = 'manifest';
-                link.href = manifestUrl;
-                document.head.appendChild(link);
 
                 // 2. Install Prompt Logic
                 let deferredPrompt;
